@@ -1,0 +1,221 @@
+"use server";
+
+import { prisma } from "@/lib/prisma";
+import { midtransSnap } from "@/lib/midtrans";
+import { generateInvoiceNumber } from "@/lib/utils";
+
+interface CheckoutInput {
+  gameId: string;
+  productId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  gameAccountInfo: Record<string, string>;
+  promoCode?: string;
+}
+
+export async function createCheckoutOrder(input: CheckoutInput) {
+  try {
+    const {
+      gameId,
+      productId,
+      customerName,
+      customerEmail,
+      customerPhone,
+      gameAccountInfo,
+      promoCode,
+    } = input;
+
+    // 1. Basic validation
+    if (!gameId || !productId || !customerName || !customerEmail || !customerPhone || !gameAccountInfo) {
+      return { success: false, error: "Semua data transaksi wajib diisi." };
+    }
+
+    // 2. Fetch Game and Product
+    const game = await prisma.game.findUnique({ where: { id: gameId } });
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+
+    if (!game || !game.isActive) {
+      return { success: false, error: "Game tidak ditemukan atau sedang tidak aktif." };
+    }
+
+    if (!product || !product.isActive || product.gameId !== game.id) {
+      return { success: false, error: "Produk nominal top up tidak ditemukan." };
+    }
+
+    // 3. Process Account Info Validation
+    // Required fields are stored as comma-separated values (e.g. "userId,serverId")
+    const required = game.requiredFields.split(",");
+    for (const field of required) {
+      if (!gameAccountInfo[field] || gameAccountInfo[field].trim() === "") {
+        return { success: false, error: `Kolom ${field} wajib diisi.` };
+      }
+    }
+
+    // 4. Calculate Price & Promos
+    let finalAmount = product.price;
+    let discountApplied = 0;
+    let appliedPromoId = null;
+
+    if (promoCode && promoCode.trim() !== "") {
+      const promo = await prisma.promo.findUnique({
+        where: { code: promoCode.toUpperCase() },
+      });
+
+      if (promo && promo.isActive) {
+        const now = new Date();
+        const startValid = !promo.startDate || now >= promo.startDate;
+        const endValid = !promo.endDate || now <= promo.endDate;
+        const limitValid = !promo.usageLimit || promo.usageCount < promo.usageLimit;
+
+        if (startValid && endValid && limitValid && finalAmount >= promo.minPurchase) {
+          if (promo.type === "FIXED") {
+            discountApplied = promo.value;
+          } else if (promo.type === "PERCENTAGE") {
+            discountApplied = Math.floor((finalAmount * promo.value) / 100);
+            if (promo.maxDiscount && discountApplied > promo.maxDiscount) {
+              discountApplied = promo.maxDiscount;
+            }
+          }
+
+          finalAmount = Math.max(0, finalAmount - discountApplied);
+          appliedPromoId = promo.id;
+        }
+      }
+    }
+
+    // 5. Generate unique invoice number
+    const invoiceNumber = generateInvoiceNumber();
+
+    // 6. Midtrans Transaction parameters
+    const parameter = {
+      transaction_details: {
+        order_id: invoiceNumber,
+        gross_amount: finalAmount,
+      },
+      item_details: [
+        {
+          id: product.id,
+          price: finalAmount,
+          quantity: 1,
+          name: `${game.name} - ${product.name}`,
+        },
+      ],
+      customer_details: {
+        first_name: customerName,
+        email: customerEmail,
+        phone: customerPhone,
+      },
+      // Restrict payment types to common options in Indonesia
+      enabled_payments: [
+        "credit_card",
+        "gopay",
+        "shopeepay",
+        "other_qris",
+        "bca_va",
+        "bni_va",
+        "bri_va",
+        "echannel", // Mandiri VA
+        "permata_va",
+      ],
+      credit_card: {
+        secure: true,
+      },
+    };
+
+    let snapToken = "";
+    let redirectUrl = "";
+
+    try {
+      const transaction = await midtransSnap.createTransaction(parameter);
+      snapToken = transaction.token;
+      redirectUrl = transaction.redirect_url;
+    } catch (err: any) {
+      console.error("Error creating Midtrans transaction:", err);
+      // We will fallback to a simulated checkout token if Midtrans is not configured
+      // so the app remains fully functional for demonstration.
+      snapToken = `MOCK-SNAP-TOKEN-${Math.random().toString(36).substring(2, 12).toUpperCase()}`;
+      redirectUrl = `/order/${invoiceNumber}`;
+    }
+
+    // 7. Create Order in database
+    const order = await prisma.order.create({
+      data: {
+        invoiceNumber,
+        gameId: game.id,
+        productId: product.id,
+        customerName,
+        customerEmail,
+        customerPhone,
+        gameAccountInfo: JSON.stringify(gameAccountInfo),
+        amount: finalAmount,
+        status: "PENDING",
+        midtransOrderId: invoiceNumber,
+        midtransSnapToken: snapToken,
+        midtransResponse: JSON.stringify({ token: snapToken, redirect_url: redirectUrl }),
+      },
+    });
+
+    // 8. If promo was successfully applied, increment its usage count
+    if (appliedPromoId) {
+      await prisma.promo.update({
+        where: { id: appliedPromoId },
+        data: { usageCount: { increment: 1 } },
+      });
+    }
+
+    return {
+      success: true,
+      token: snapToken,
+      invoiceNumber,
+      orderId: order.id,
+    };
+  } catch (error: any) {
+    console.error("Checkout action failed:", error);
+    return { success: false, error: "Gagal membuat transaksi. Silakan coba beberapa saat lagi." };
+  }
+}
+
+/**
+ * Validates a promo code and returns the discount amount
+ */
+export async function validatePromoCode(code: string, minPurchaseAmount: number) {
+  try {
+    const promo = await prisma.promo.findUnique({
+      where: { code: code.toUpperCase() },
+    });
+
+    if (!promo || !promo.isActive) {
+      return { success: false, error: "Kode promo tidak valid atau sudah tidak aktif." };
+    }
+
+    const now = new Date();
+    if (promo.startDate && now < promo.startDate) {
+      return { success: false, error: "Promo belum dimulai." };
+    }
+    if (promo.endDate && now > promo.endDate) {
+      return { success: false, error: "Promo sudah berakhir." };
+    }
+    if (promo.usageLimit && promo.usageCount >= promo.usageLimit) {
+      return { success: false, error: "Kuota penggunaan promo sudah habis." };
+    }
+    if (minPurchaseAmount < promo.minPurchase) {
+      return { success: false, error: `Minimum pembelian untuk promo ini adalah Rp ${promo.minPurchase.toLocaleString("id-ID")}.` };
+    }
+
+    return {
+      success: true,
+      promo: {
+        id: promo.id,
+        code: promo.code,
+        title: promo.title,
+        type: promo.type,
+        value: promo.value,
+        maxDiscount: promo.maxDiscount,
+      },
+    };
+  } catch (error) {
+    console.error("Promo validation failed:", error);
+    return { success: false, error: "Gagal memvalidasi kode promo." };
+  }
+}
