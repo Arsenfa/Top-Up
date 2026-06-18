@@ -287,8 +287,8 @@ export function CheckoutForm({ game, products }: CheckoutFormProps) {
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-8 rounded-lg bg-bg-secondary border border-border-color p-1 flex items-center justify-center overflow-hidden">
-                      <img src={method.logo} alt={method.name} className="w-full h-full object-contain" />
+                    <div className="w-12 h-8 rounded-lg bg-bg-secondary border border-border-color p-1.5 flex items-center justify-center overflow-hidden shrink-0">
+                      {renderPaymentLogo(method.id)}
                     </div>
                     <div>
                       <h4 className="font-medium text-xs text-text-primary">{method.name}</h4>
@@ -353,4 +353,74 @@ export function CheckoutForm({ game, products }: CheckoutFormProps) {
       </form>
     </>
   );
+}
+
+// Inline SVGs for payment method logos
+function QrisLogo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 24" fill="currentColor" className={className}>
+      <path d="M2 3h6v6H2V3zm1 1v4h4V4H3zm7 0h2v2h-2V4zm3 0h4v6h-4V4zm1 1v4h2V5h-2zM2 12h6v6H2v-6zm1 1v4h4v-4H3zm7-1h2v4h-2v-4zm0 5h4v2h-4v-2zm5-5h2v6h-2v-6zm3 1h2v3h-2v-3zm0 4h4v2h-4v-2z" />
+      <text x="24" y="18" fontFamily="sans-serif" fontWeight="bold" fontSize="15" letterSpacing="-0.5">QRIS</text>
+    </svg>
+  );
+}
+
+function GopayLogo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 20" fill="currentColor" className={className}>
+      <text x="0" y="15" fontFamily="sans-serif" fontWeight="900" fontSize="17" letterSpacing="-0.8">go<tspan fill="#00AED6">pay</tspan></text>
+    </svg>
+  );
+}
+
+function BcaLogo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 20" fill="currentColor" className={className}>
+      <text x="0" y="15" fontFamily="sans-serif" fontWeight="bold" fontStyle="italic" fontSize="18" letterSpacing="-0.8" fill="#005BAA">BCA</text>
+    </svg>
+  );
+}
+
+function BniLogo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 20" fill="currentColor" className={className}>
+      <text x="0" y="15" fontFamily="sans-serif" fontWeight="900" fontSize="18" letterSpacing="-0.5" fill="#E77228">BNI</text>
+    </svg>
+  );
+}
+
+function BriLogo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 20" fill="currentColor" className={className}>
+      <text x="0" y="15" fontFamily="sans-serif" fontWeight="bold" fontSize="18" letterSpacing="-0.8" fill="#005BAA">BRI</text>
+    </svg>
+  );
+}
+
+function MandiriLogo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 20" fill="currentColor" className={className}>
+      <text x="0" y="15" fontFamily="sans-serif" fontWeight="bold" fontStyle="italic" fontSize="16" letterSpacing="-0.8" fill="#F5A623">mandırı</text>
+    </svg>
+  );
+}
+
+function renderPaymentLogo(id: string) {
+  const className = "w-full h-auto max-h-5 text-text-primary";
+  switch (id) {
+    case "qris":
+      return <QrisLogo className={className} />;
+    case "gopay":
+      return <GopayLogo className={className} />;
+    case "bca_va":
+      return <BcaLogo className={className} />;
+    case "bni_va":
+      return <BniLogo className={className} />;
+    case "bri_va":
+      return <BriLogo className={className} />;
+    case "mandiri_va":
+      return <MandiriLogo className={className} />;
+    default:
+      return null;
+  }
 }
