@@ -106,16 +106,65 @@ export function OrderStatus({ order }: OrderStatusProps) {
   };
 
   const statusConfig = {
-    PENDING: { label: "Menunggu Pembayaran", variant: "warning" as const, icon: <Clock className="w-7 h-7 text-warning" />, description: "Selesaikan pembayaran Anda." },
-    PROCESSING: { label: "Sedang Diproses", variant: "info" as const, icon: <Clock className="w-7 h-7 text-info" />, description: "Pembayaran terverifikasi, top up sedang dikirim." },
-    SUCCESS: { label: "Berhasil", variant: "success" as const, icon: <CheckCircle2 className="w-7 h-7 text-success" />, description: "Top up sukses! Terima kasih." },
-    FAILED: { label: "Gagal", variant: "danger" as const, icon: <XCircle className="w-7 h-7 text-danger" />, description: "Transaksi gagal atau ditolak." },
-    EXPIRED: { label: "Kedaluwarsa", variant: "neutral" as const, icon: <XCircle className="w-7 h-7 text-text-muted" />, description: "Waktu pembayaran habis." },
+    PENDING: {
+      label: "Menunggu Pembayaran",
+      variant: "warning" as const,
+      icon: (
+        <div className="w-16 h-16 rounded-full bg-warning/10 text-warning flex items-center justify-center animate-pulse">
+          <Clock className="w-8 h-8 stroke-[2.5]" />
+        </div>
+      ),
+      description: "Selesaikan pembayaran Anda sebelum batas waktu berakhir agar transaksi dapat diproses otomatis.",
+    },
+    PROCESSING: {
+      label: "Sedang Diproses",
+      variant: "info" as const,
+      icon: (
+        <div className="w-16 h-16 rounded-full bg-info/10 text-info flex items-center justify-center animate-pulse-slow">
+          <Clock className="w-8 h-8 stroke-[2.5]" />
+        </div>
+      ),
+      description: "Pembayaran terverifikasi! Pesanan Anda sedang diproses oleh sistem otomatis kami.",
+    },
+    SUCCESS: {
+      label: "Berhasil",
+      variant: "success" as const,
+      icon: (
+        <div className="w-16 h-16 rounded-full bg-success/10 text-success flex items-center justify-center">
+          <CheckCircle2 className="w-8 h-8 stroke-[2.5]" />
+        </div>
+      ),
+      description: "Top up sukses! Item/diamond telah berhasil dikirim ke akun game Anda. Terima kasih!",
+    },
+    FAILED: {
+      label: "Gagal",
+      variant: "danger" as const,
+      icon: (
+        <div className="w-16 h-16 rounded-full bg-danger/10 text-danger flex items-center justify-center">
+          <XCircle className="w-8 h-8 stroke-[2.5]" />
+        </div>
+      ),
+      description: "Transaksi gagal atau ditolak. Silakan hubungi CS jika ada kendala.",
+    },
+    EXPIRED: {
+      label: "Kedaluwarsa",
+      variant: "neutral" as const,
+      icon: (
+        <div className="w-16 h-16 rounded-full bg-neutral/10 text-text-muted flex items-center justify-center">
+          <XCircle className="w-8 h-8 stroke-[2.5]" />
+        </div>
+      ),
+      description: "Waktu batas pembayaran telah habis. Silakan buat pesanan baru.",
+    },
   }[currentStatus] || {
     label: currentStatus,
     variant: "neutral" as const,
-    icon: <AlertCircle className="w-7 h-7 text-text-muted" />,
-    description: "Status tidak diketahui.",
+    icon: (
+      <div className="w-16 h-16 rounded-full bg-neutral/10 text-text-muted flex items-center justify-center">
+        <AlertCircle className="w-8 h-8 stroke-[2.5]" />
+      </div>
+    ),
+    description: "Status transaksi tidak diketahui.",
   };
 
   return (
@@ -126,7 +175,7 @@ export function OrderStatus({ order }: OrderStatusProps) {
         strategy="afterInteractive"
       />
 
-      <div className="max-w-3xl mx-auto px-4 py-10 sm:py-16 flex flex-col gap-6">
+      <div className="max-w-2xl mx-auto px-4 py-12 sm:py-20 flex flex-col gap-8">
         <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-text-secondary hover:text-accent transition-colors w-fit">
           <ArrowLeft className="w-4 h-4" />
           Kembali ke Beranda
@@ -134,16 +183,16 @@ export function OrderStatus({ order }: OrderStatusProps) {
 
         {/* Status Hero */}
         <Card>
-          <CardBody className="flex flex-col items-center text-center p-8">
-            <div className="mb-4">{statusConfig.icon}</div>
-            <Badge variant={statusConfig.variant} className="mb-3">{statusConfig.label}</Badge>
-            <h1 className="font-display text-lg font-bold text-text-primary mb-2">
+          <CardBody className="flex flex-col items-center text-center p-8 sm:p-12">
+            <div className="mb-6">{statusConfig.icon}</div>
+            <Badge variant={statusConfig.variant} className="mb-4 text-xs px-3.5 py-1.5 font-bold uppercase tracking-wider">{statusConfig.label}</Badge>
+            <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight mb-2">
               Invoice: {order.invoiceNumber}
             </h1>
-            <p className="text-sm text-text-muted leading-relaxed max-w-md">{statusConfig.description}</p>
+            <p className="text-sm sm:text-base text-text-secondary leading-relaxed max-w-lg">{statusConfig.description}</p>
 
             {currentStatus === "PENDING" && (
-              <div className="flex flex-col sm:flex-row gap-3 mt-6">
+              <div className="flex flex-col sm:flex-row gap-3 mt-8">
                 {order.midtransSnapToken && (
                   <Button onClick={handlePayNow} isLoading={payLoading}>Selesaikan Pembayaran</Button>
                 )}
@@ -157,73 +206,73 @@ export function OrderStatus({ order }: OrderStatusProps) {
 
         {/* Transaction Details */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <h2 className="text-sm font-bold text-text-primary">Rincian Transaksi</h2>
-            <button onClick={handleCopyInvoice} className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors border border-border-color px-2.5 py-1.5 rounded-lg hover:bg-bg-tertiary">
+          <CardHeader className="flex flex-row items-center justify-between p-6 sm:p-8 pb-0">
+            <h2 className="text-base font-extrabold text-text-primary">Rincian Transaksi</h2>
+            <button onClick={handleCopyInvoice} className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors border border-border-color px-3 py-1.5 rounded-lg hover:bg-bg-tertiary">
               <Copy className="w-3.5 h-3.5" />
               {isCopying ? "Tersalin!" : "Salin Invoice"}
             </button>
           </CardHeader>
-          <CardBody className="flex flex-col gap-4 text-sm">
-            <div className="flex items-center gap-3.5 border-b border-border-color pb-4">
-              <div className="w-12 h-12 rounded-xl overflow-hidden bg-bg-tertiary border border-border-color">
+          <CardBody className="flex flex-col gap-6 p-6 sm:p-8">
+            <div className="flex items-center gap-4 border-b border-border-color pb-5">
+              <div className="w-14 h-14 rounded-xl overflow-hidden bg-bg-tertiary border border-border-color shrink-0">
                 <img src={order.game.imageUrl} alt={order.game.name} className="w-full h-full object-cover" />
               </div>
               <div>
-                <h4 className="font-bold text-text-primary">{order.game.name}</h4>
-                <p className="text-xs text-text-muted">Top Up Nominal</p>
+                <h4 className="text-base font-extrabold text-text-primary">{order.game.name}</h4>
+                <p className="text-xs text-text-muted">Rincian Pembelian Game</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-y-4 pt-2">
-              <div className="flex flex-col gap-1">
-                <span className="text-xs text-text-muted">Nominal Top Up</span>
-                <span className="font-semibold text-text-primary">{order.product.name}</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 pt-2">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs text-text-muted font-medium">Nominal Top Up</span>
+                <span className="text-sm sm:text-base font-bold text-text-primary">{order.product.name}</span>
               </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-xs text-text-muted">Total Bayar</span>
-                <span className="font-bold text-accent">{formatCurrency(order.amount)}</span>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs text-text-muted font-medium">Total Bayar</span>
+                <span className="text-base sm:text-lg font-black text-accent">{formatCurrency(order.amount)}</span>
               </div>
 
               {Object.entries(accountInfo).map(([key, val]) => (
-                <div key={key} className="flex flex-col gap-1">
-                  <span className="text-xs text-text-muted">{key === "userId" ? "User ID / Player ID" : "Server ID"}</span>
-                  <span className="font-mono font-semibold text-text-primary">{val}</span>
+                <div key={key} className="flex flex-col gap-1.5">
+                  <span className="text-xs text-text-muted font-medium">{key === "userId" ? "User ID / Player ID" : "Server ID"}</span>
+                  <span className="font-mono text-sm sm:text-base font-bold text-text-primary">{val}</span>
                 </div>
               ))}
 
-              <div className="flex flex-col gap-1">
-                <span className="text-xs text-text-muted">Metode Pembayaran</span>
-                <span className="font-semibold text-text-primary">{order.paymentMethod || "Midtrans"}</span>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs text-text-muted font-medium">Metode Pembayaran</span>
+                <span className="text-sm sm:text-base font-bold text-text-primary">{order.paymentMethod || "Midtrans"}</span>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <span className="text-xs text-text-muted">Tanggal Transaksi</span>
-                <span className="text-text-primary">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs text-text-muted font-medium">Tanggal Transaksi</span>
+                <span className="text-sm sm:text-base font-bold text-text-primary">
                   {new Date(order.createdAt).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}
                 </span>
               </div>
 
               {(order.paidAt || currentStatus === "SUCCESS") && (
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs text-text-muted">Waktu Pembayaran</span>
-                  <span className="text-text-primary">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xs text-text-muted font-medium">Waktu Pembayaran</span>
+                  <span className="text-sm sm:text-base font-bold text-text-primary">
                     {new Date(order.paidAt || new Date()).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}
                   </span>
                 </div>
               )}
             </div>
 
-            <div className="border-t border-border-color pt-4 mt-2 flex flex-col gap-3">
-              <h3 className="text-xs font-semibold text-text-muted">Informasi Kontak</h3>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                <div className="flex items-center gap-2 text-text-secondary">
-                  <Mail className="w-4 h-4 text-accent" />
-                  <span>{order.customerEmail}</span>
+            <div className="border-t border-border-color pt-6 mt-2 flex flex-col gap-3.5">
+              <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">Informasi Kontak</h3>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
+                <div className="flex items-center gap-2.5 text-sm text-text-secondary">
+                  <Mail className="w-4.5 h-4.5 text-accent shrink-0" />
+                  <span className="font-medium">{order.customerEmail}</span>
                 </div>
-                <div className="flex items-center gap-2 text-text-secondary">
-                  <Smartphone className="w-4 h-4 text-accent" />
-                  <span>{order.customerPhone}</span>
+                <div className="flex items-center gap-2.5 text-sm text-text-secondary">
+                  <Smartphone className="w-4.5 h-4.5 text-accent shrink-0" />
+                  <span className="font-medium">{order.customerPhone}</span>
                 </div>
               </div>
             </div>
