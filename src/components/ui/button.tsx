@@ -9,14 +9,14 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", variant = "primary", size = "md", isLoading, children, disabled, ...props }, ref) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+      "inline-flex items-center justify-center font-semibold rounded-xl transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:opacity-50 disabled:pointer-events-none";
 
     const variants = {
-      primary: "bg-accent hover:bg-accent-hover text-white shadow-lg shadow-accent/25",
-      secondary: "bg-bg-tertiary hover:bg-bg-tertiary/80 text-text-primary border border-border-color",
-      outline: "bg-transparent border border-border-color hover:bg-bg-secondary text-text-primary",
-      ghost: "bg-transparent hover:bg-bg-secondary text-text-secondary hover:text-text-primary",
-      danger: "bg-danger hover:bg-danger/80 text-white shadow-lg shadow-danger/25",
+      primary: "bg-accent hover:bg-accent-hover text-white",
+      secondary: "bg-bg-tertiary hover:bg-bg-tertiary/70 text-text-primary border border-border-color",
+      outline: "bg-transparent border border-border-color hover:bg-bg-tertiary text-text-primary",
+      ghost: "bg-transparent hover:bg-bg-tertiary text-text-secondary hover:text-text-primary",
+      danger: "bg-danger hover:bg-danger/90 text-white",
     };
 
     const sizes = {

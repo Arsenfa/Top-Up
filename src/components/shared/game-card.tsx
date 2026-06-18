@@ -1,28 +1,11 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Zap, Star } from "lucide-react";
+import { ArrowRight, Star, Sparkles } from "lucide-react";
 
-/* ── Game-specific image map keyed by slug ── */
-const GAME_IMAGES: Record<string, string> = {
-  "mobile-legends": "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop",
-  "free-fire": "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=600&auto=format&fit=crop",
-  "genshin-impact": "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
-  "pubg-mobile": "https://images.unsplash.com/photo-1589241062272-c0a000072dfa?q=80&w=600&auto=format&fit=crop",
-  "valorant": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop",
-  "honkai-star-rail": "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=600&auto=format&fit=crop",
-  "call-of-duty-mobile": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600&auto=format&fit=crop",
-  "arena-of-valor": "https://images.unsplash.com/photo-1553481187-be93c21490a9?q=80&w=600&auto=format&fit=crop",
-};
+function formatPrice(n: number): string {
+  return "Rp " + n.toLocaleString("id-ID");
+}
 
-/* ── Category styling ── */
-const CATEGORY_CHIP: Record<string, string> = {
-  MOBA: "chip-moba",
-  FPS: "chip-fps",
-  RPG: "chip-rpg",
-  SPORTS: "chip-sports",
-};
-
-/* ── Popular game slugs ── */
 const POPULAR_SLUGS = new Set(["mobile-legends", "free-fire", "genshin-impact", "valorant", "pubg-mobile"]);
 
 interface GameCardProps {
@@ -38,72 +21,62 @@ interface GameCardProps {
   startPrice?: number;
 }
 
-function formatPrice(n: number): string {
-  return "Rp " + n.toLocaleString("id-ID");
-}
-
 export function GameCard({ game, startPrice }: GameCardProps) {
-  const image = GAME_IMAGES[game.slug] ?? game.imageUrl;
-  const categoryChip = CATEGORY_CHIP[game.category] ?? "chip-other";
   const isPopular = game.isPopular ?? POPULAR_SLUGS.has(game.slug);
 
   return (
-    <Link href={`/games/${game.slug}`} className="group block focus-visible:outline-none">
-      <div className="relative rounded-2xl overflow-hidden border border-border-color bg-bg-secondary card-hover flex flex-col h-full focus-within:border-accent/40">
-
-        {/* ── Image ── */}
+    <Link href={`/games/${game.slug}`} className="group block relative">
+      {/* Premium card container with clean borders and hover lift transition */}
+      <div 
+        className="rounded-[20px] overflow-hidden border border-border-color bg-bg-secondary flex flex-col h-full hover:border-accent/30 hover:shadow-[0_8px_30px_rgb(194,65,12,0.03)] transition-all duration-300 group-hover:-translate-y-0.5"
+      >
+        {/* Visual Asset Slot */}
         <div className="relative aspect-[4/3] overflow-hidden bg-bg-tertiary">
           <img
-            src={image}
+            src={game.imageUrl}
             alt={game.name}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+            className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
           />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          {/* Subtle vignette gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 pointer-events-none" />
 
-          {/* Category chip */}
-          <span className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${categoryChip}`}>
-            {game.category}
-          </span>
-
-          {/* Popular badge */}
+          {/* Popular Tag - Minimalist & Sienna Accent */}
           {isPopular && (
-            <span className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber/15 border border-amber/30 text-[10px] font-bold uppercase tracking-wider text-amber">
-              <Star className="w-2.5 h-2.5 fill-amber" />
-              Hot
+            <span className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent text-white text-[9px] font-bold uppercase tracking-wider shadow-sm">
+              <Sparkles className="w-2.5 h-2.5" />
+              Populer
             </span>
           )}
         </div>
 
-        {/* ── Details ── */}
+        {/* Content Block */}
         <div className="p-4 flex flex-col flex-grow">
-          <div className="flex-grow">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-text-muted mb-1">
-              {game.publisher}
-            </p>
-            <h3 className="font-display font-bold text-sm text-text-primary group-hover:text-accent transition-colors duration-200 line-clamp-2 leading-snug">
-              {game.name}
-            </h3>
-          </div>
+          {/* Publisher tag - monospace/uppercase micro label */}
+          <span className="text-[9px] font-bold text-text-muted uppercase tracking-widest leading-none">
+            {game.publisher}
+          </span>
+          
+          <h3 className="font-display font-bold text-sm sm:text-base text-text-primary group-hover:text-accent transition-colors line-clamp-1 mt-1.5 leading-snug">
+            {game.name}
+          </h3>
 
-          <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between">
-            <div>
-              <p className="text-[10px] text-text-muted">Mulai dari</p>
-              <p className="text-xs font-bold text-text-primary">
+          {/* Action Divider & Price */}
+          <div className="mt-auto pt-3 border-t border-border-subtle flex items-center justify-between">
+            <div className="space-y-0.5">
+              <p className="text-[9px] font-semibold text-text-muted uppercase tracking-wider leading-none">Mulai dari</p>
+              <p className="text-xs font-extrabold text-text-primary">
                 {startPrice ? formatPrice(startPrice) : "Rp 1.000"}
               </p>
             </div>
-            <div className="flex items-center gap-1 text-xs font-bold text-accent group-hover:gap-1.5 transition-all duration-200">
-              <Zap className="w-3 h-3" />
-              <span>Top Up</span>
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-200" />
-            </div>
+            
+            {/* Action pill on hover */}
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-accent group-hover:translate-x-0.5 transition-transform duration-200">
+              Top Up
+              <ArrowRight className="w-3 h-3" />
+            </span>
           </div>
         </div>
-
-        {/* Accent hover border glow */}
-        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent group-hover:ring-accent/20 transition-all duration-300 pointer-events-none" />
       </div>
     </Link>
   );

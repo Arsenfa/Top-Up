@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import Script from "next/script";
 import Link from "next/link";
-import { CheckCircle2, AlertCircle, Clock, XCircle, Copy, ArrowLeft, Gamepad, Calendar, Mail, Smartphone, ShoppingBag } from "lucide-react";
+import { CheckCircle2, AlertCircle, Clock, XCircle, Copy, ArrowLeft, Mail, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardBody, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardBody } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency } from "@/lib/utils";
@@ -25,13 +25,8 @@ interface OrderStatusProps {
     midtransSnapToken: string | null;
     paidAt: Date | null;
     createdAt: Date;
-    game: {
-      name: string;
-      imageUrl: string;
-    };
-    product: {
-      name: string;
-    };
+    game: { name: string; imageUrl: string };
+    product: { name: string };
   };
 }
 
@@ -47,53 +42,46 @@ export function OrderStatus({ order }: OrderStatusProps) {
     try {
       const res = await updateOrderStatus(order.id, "SUCCESS");
       if (res.success) {
-        success("Simulasi pembayaran berhasil! Status diubah menjadi Berhasil.");
+        success("Simulasi pembayaran berhasil!");
         setCurrentStatus("SUCCESS");
       } else {
         error(res.error || "Gagal mensimulasikan pembayaran.");
       }
-    } catch (err) {
+    } catch {
       error("Terjadi kesalahan saat simulasi pembayaran.");
     } finally {
       setSimLoading(false);
     }
   };
 
-  // Poll status from API every 5 seconds if PENDING
   React.useEffect(() => {
     if (currentStatus !== "PENDING") return;
-
     const interval = setInterval(async () => {
       try {
         const response = await fetch(`/api/payment/status?invoice=${order.invoiceNumber}`);
         const data = await response.json();
         if (data.success && data.status !== currentStatus) {
           setCurrentStatus(data.status);
-          if (data.status === "SUCCESS") {
-            success("Pembayaran berhasil diverifikasi!");
-          }
+          if (data.status === "SUCCESS") success("Pembayaran berhasil diverifikasi!");
         }
       } catch (err) {
         console.error("Failed to poll order status:", err);
       }
     }, 5000);
-
     return () => clearInterval(interval);
   }, [order.invoiceNumber, currentStatus, success]);
 
-
-  // Parse account information
   let accountInfo: Record<string, string> = {};
   try {
     accountInfo = JSON.parse(order.gameAccountInfo);
-  } catch (err) {
-    console.error("Failed to parse game account info:", err);
+  } catch {
+    // ignore parse error
   }
 
   const handleCopyInvoice = () => {
     setIsCopying(true);
     navigator.clipboard.writeText(order.invoiceNumber);
-    success("Nomor invoice berhasil disalin!");
+    success("Nomor invoice disalin!");
     setTimeout(() => setIsCopying(false), 2000);
   };
 
@@ -102,124 +90,65 @@ export function OrderStatus({ order }: OrderStatusProps) {
       error("Token pembayaran tidak ditemukan.");
       return;
     }
-
     setPayLoading(true);
-
     if (window.snap) {
       setPayLoading(false);
       window.snap.pay(order.midtransSnapToken, {
-        onSuccess: (res) => {
-          success("Pembayaran sukses!");
-          window.location.reload();
-        },
-        onPending: (res) => {
-          warning("Menunggu penyelesaian pembayaran...");
-          window.location.reload();
-        },
-        onError: (res) => {
-          error("Transaksi pembayaran gagal.");
-          window.location.reload();
-        },
-        onClose: () => {
-          warning("Popup transaksi pembayaran ditutup.");
-        },
+        onSuccess: () => { success("Pembayaran sukses!"); window.location.reload(); },
+        onPending: () => { warning("Menunggu pembayaran..."); window.location.reload(); },
+        onError: () => { error("Pembayaran gagal."); window.location.reload(); },
+        onClose: () => { warning("Popup ditutup."); },
       });
     } else {
       setPayLoading(false);
-      warning("Sistem pembayaran berjalan dalam mode simulasi.");
+      warning("Mode simulasi.");
     }
   };
 
-  // Status mapping
   const statusConfig = {
-    PENDING: {
-      label: "Menunggu Pembayaran",
-      variant: "warning" as const,
-      icon: <Clock className="w-8 h-8 text-warning animate-pulse" />,
-      description: "Silakan selesaikan pembayaran Anda menggunakan snap popup.",
-    },
-    PROCESSING: {
-      label: "Sedang Diproses",
-      variant: "info" as const,
-      icon: <Clock className="w-8 h-8 text-info" />,
-      description: "Pembayaran terverifikasi! Sistem sedang mengirim top up ke akun game Anda.",
-    },
-    SUCCESS: {
-      label: "Berhasil",
-      variant: "success" as const,
-      icon: <CheckCircle2 className="w-8 h-8 text-success" />,
-      description: "Top up sukses dikirim! Terima kasih telah berbelanja di TopUpKu.",
-    },
-    FAILED: {
-      label: "Gagal",
-      variant: "danger" as const,
-      icon: <XCircle className="w-8 h-8 text-danger" />,
-      description: "Transaksi pembayaran gagal atau ditolak.",
-    },
-    EXPIRED: {
-      label: "Kedaluwarsa",
-      variant: "neutral" as const,
-      icon: <XCircle className="w-8 h-8 text-text-secondary" />,
-      description: "Waktu pembayaran telah habis. Silakan buat pesanan baru.",
-    },
+    PENDING: { label: "Menunggu Pembayaran", variant: "warning" as const, icon: <Clock className="w-7 h-7 text-warning" />, description: "Selesaikan pembayaran Anda." },
+    PROCESSING: { label: "Sedang Diproses", variant: "info" as const, icon: <Clock className="w-7 h-7 text-info" />, description: "Pembayaran terverifikasi, top up sedang dikirim." },
+    SUCCESS: { label: "Berhasil", variant: "success" as const, icon: <CheckCircle2 className="w-7 h-7 text-success" />, description: "Top up sukses! Terima kasih." },
+    FAILED: { label: "Gagal", variant: "danger" as const, icon: <XCircle className="w-7 h-7 text-danger" />, description: "Transaksi gagal atau ditolak." },
+    EXPIRED: { label: "Kedaluwarsa", variant: "neutral" as const, icon: <XCircle className="w-7 h-7 text-text-muted" />, description: "Waktu pembayaran habis." },
   }[currentStatus] || {
     label: currentStatus,
     variant: "neutral" as const,
-    icon: <AlertCircle className="w-8 h-8 text-text-secondary" />,
-    description: "Status transaksi tidak diketahui.",
+    icon: <AlertCircle className="w-7 h-7 text-text-muted" />,
+    description: "Status tidak diketahui.",
   };
 
   return (
     <>
-      {/* Midtrans Snap JS Script Loader for retry */}
       <Script
-        src={`https://app.${
-          process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true" ? "" : "sandbox."
-        }midtrans.com/snap/snap.js`}
+        src={`https://app.${process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true" ? "" : "sandbox."}midtrans.com/snap/snap.js`}
         data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
         strategy="afterInteractive"
       />
 
       <div className="max-w-3xl mx-auto px-4 py-10 sm:py-16 flex flex-col gap-6">
-        {/* Back Link */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-text-secondary hover:text-text-primary transition-colors w-fit"
-        >
+        <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-text-secondary hover:text-accent transition-colors w-fit">
           <ArrowLeft className="w-4 h-4" />
           Kembali ke Beranda
         </Link>
 
-        {/* Status Hero Card */}
-        <Card variant="glass" className="border-border-color/60">
+        {/* Status Hero */}
+        <Card>
           <CardBody className="flex flex-col items-center text-center p-8">
-            <div className="p-4 bg-bg-secondary rounded-full border border-border-color/40 mb-5 shadow-inner">
-              {statusConfig.icon}
-            </div>
-            <Badge variant={statusConfig.variant} className="mb-3">
-              {statusConfig.label}
-            </Badge>
+            <div className="mb-4">{statusConfig.icon}</div>
+            <Badge variant={statusConfig.variant} className="mb-3">{statusConfig.label}</Badge>
             <h1 className="font-display text-lg font-bold text-text-primary mb-2">
-              Nomor Invoice: {order.invoiceNumber}
+              Invoice: {order.invoiceNumber}
             </h1>
-            <p className="text-xs text-text-secondary leading-relaxed max-w-md">
-              {statusConfig.description}
-            </p>
+            <p className="text-sm text-text-muted leading-relaxed max-w-md">{statusConfig.description}</p>
 
             {currentStatus === "PENDING" && (
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 {order.midtransSnapToken && (
-                  <Button onClick={handlePayNow} className="shadow-xl" isLoading={payLoading}>
-                    Selesaikan Pembayaran
-                  </Button>
+                  <Button onClick={handlePayNow} isLoading={payLoading}>Selesaikan Pembayaran</Button>
                 )}
-                <Button
-                  onClick={handleSimulateSuccess}
-                  variant="secondary"
-                  className="shadow-xl border border-accent/25 hover:border-accent text-accent"
-                  isLoading={simLoading}
-                >
-                  Simulasikan Bayar Sukses (Demo)
+                <Button onClick={handleSimulateSuccess} variant="outline" isLoading={simLoading}>
+                  Simulasi Bayar Sukses (Demo)
                 </Button>
               </div>
             )}
@@ -227,96 +156,66 @@ export function OrderStatus({ order }: OrderStatusProps) {
         </Card>
 
         {/* Transaction Details */}
-        <Card variant="default">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <h2 className="text-sm font-extrabold text-text-primary uppercase tracking-wider">
-              Rincian Transaksi
-            </h2>
-            <button
-              onClick={handleCopyInvoice}
-              className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors border border-border-color/80 px-2.5 py-1.5 rounded-xl hover:bg-bg-tertiary/50"
-            >
+            <h2 className="text-sm font-bold text-text-primary">Rincian Transaksi</h2>
+            <button onClick={handleCopyInvoice} className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors border border-border-color px-2.5 py-1.5 rounded-lg hover:bg-bg-tertiary">
               <Copy className="w-3.5 h-3.5" />
               {isCopying ? "Tersalin!" : "Salin Invoice"}
             </button>
           </CardHeader>
-          <CardBody className="flex flex-col gap-4 text-xs sm:text-sm">
-            {/* Game Info */}
-            <div className="flex items-center gap-3.5 border-b border-border-color/60 pb-4">
-              <div className="w-12 h-12 rounded-xl overflow-hidden bg-bg-tertiary border border-border-color/40">
+          <CardBody className="flex flex-col gap-4 text-sm">
+            <div className="flex items-center gap-3.5 border-b border-border-color pb-4">
+              <div className="w-12 h-12 rounded-xl overflow-hidden bg-bg-tertiary border border-border-color">
                 <img src={order.game.imageUrl} alt={order.game.name} className="w-full h-full object-cover" />
               </div>
               <div>
                 <h4 className="font-bold text-text-primary">{order.game.name}</h4>
-                <p className="text-[10px] text-text-secondary font-medium">Top Up Nominal</p>
+                <p className="text-xs text-text-muted">Top Up Nominal</p>
               </div>
             </div>
 
-            {/* Grid details */}
             <div className="grid grid-cols-2 gap-y-4 pt-2">
               <div className="flex flex-col gap-1">
-                <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">
-                  Nominal Top Up
-                </span>
-                <span className="font-bold text-text-primary">{order.product.name}</span>
+                <span className="text-xs text-text-muted">Nominal Top Up</span>
+                <span className="font-semibold text-text-primary">{order.product.name}</span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">
-                  Total Bayar
-                </span>
-                <span className="font-extrabold text-accent">{formatCurrency(order.amount)}</span>
+                <span className="text-xs text-text-muted">Total Bayar</span>
+                <span className="font-bold text-accent">{formatCurrency(order.amount)}</span>
               </div>
 
               {Object.entries(accountInfo).map(([key, val]) => (
                 <div key={key} className="flex flex-col gap-1">
-                  <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">
-                    {key === "userId" ? "User ID / Player ID" : "Server ID"}
-                  </span>
-                  <span className="font-mono font-bold text-text-primary">{val}</span>
+                  <span className="text-xs text-text-muted">{key === "userId" ? "User ID / Player ID" : "Server ID"}</span>
+                  <span className="font-mono font-semibold text-text-primary">{val}</span>
                 </div>
               ))}
 
               <div className="flex flex-col gap-1">
-                <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">
-                  Metode Pembayaran
-                </span>
-                <span className="font-bold text-text-primary uppercase">
-                  {order.paymentMethod || "Midtrans"}
-                </span>
+                <span className="text-xs text-text-muted">Metode Pembayaran</span>
+                <span className="font-semibold text-text-primary">{order.paymentMethod || "Midtrans"}</span>
               </div>
 
               <div className="flex flex-col gap-1">
-                <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">
-                  Tanggal Transaksi
-                </span>
+                <span className="text-xs text-text-muted">Tanggal Transaksi</span>
                 <span className="text-text-primary">
-                  {new Date(order.createdAt).toLocaleString("id-ID", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
+                  {new Date(order.createdAt).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}
                 </span>
               </div>
 
               {(order.paidAt || currentStatus === "SUCCESS") && (
                 <div className="flex flex-col gap-1">
-                  <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">
-                    Waktu Pembayaran
-                  </span>
+                  <span className="text-xs text-text-muted">Waktu Pembayaran</span>
                   <span className="text-text-primary">
-                    {new Date(order.paidAt || new Date()).toLocaleString("id-ID", {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })}
+                    {new Date(order.paidAt || new Date()).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Customer Details */}
-            <div className="border-t border-border-color/60 pt-4 mt-2 flex flex-col gap-3">
-              <h3 className="font-bold text-[10px] text-text-secondary uppercase tracking-wider">
-                Informasi Kontak Notifikasi
-              </h3>
+            <div className="border-t border-border-color pt-4 mt-2 flex flex-col gap-3">
+              <h3 className="text-xs font-semibold text-text-muted">Informasi Kontak</h3>
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="flex items-center gap-2 text-text-secondary">
                   <Mail className="w-4 h-4 text-accent" />

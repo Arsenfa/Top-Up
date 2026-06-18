@@ -42,8 +42,8 @@ export function LoginForm() {
   };
 
   return (
-    <Card variant="glass" className="w-full max-w-md border-border-color/60 shadow-2xl">
-      <CardHeader className="text-center p-6 border-b border-border-color/30 flex flex-col items-center">
+    <Card className="w-full max-w-md">
+      <CardHeader className="text-center p-6 flex flex-col items-center">
         <div className="flex items-center gap-2 mb-4">
           <div className="p-2 bg-accent/10 border border-accent/20 rounded-xl">
             <Gamepad2 className="w-6 h-6 text-accent" />

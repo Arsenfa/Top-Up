@@ -90,7 +90,7 @@ function ToastItem({ toast, onClose }: { toast: ToastMessage; onClose: () => voi
 
   return (
     <div
-      className={`glass flex gap-3 p-4 rounded-xl border pointer-events-auto shadow-2xl animate-in slide-in-from-bottom-4 duration-300 ${borderColors[toast.type]}`}
+      className={`flex gap-3 p-4 rounded-xl border pointer-events-auto shadow-lg bg-bg-secondary ${borderColors[toast.type]}`}
     >
       <div className="flex-shrink-0 mt-0.5">{icons[toast.type]}</div>
       <div className="flex-grow">

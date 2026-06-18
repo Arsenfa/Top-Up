@@ -1,56 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 @import "tailwindcss";
 
 /* =============================================
-   DESIGN TOKENS — Carbon + Ember
-   A professional gaming marketplace palette.
-   Near-black zinc foundation + warm orange accent.
-   NOT indigo. NOT purple. NOT AI-default.
+   DESIGN TOKENS — PAPER (Light Editorial)
+   Warm off-white surfaces + burnt sienna accent.
+   No glass, no glow, no gradient-text.
    ============================================= */
 :root {
-  /* ── Surfaces (Claude-inspired Warm Obsidian/Charcoal) ── */
-  --background:         #0b0b0c;
-  --bg-primary:         #0b0b0c;
-  --bg-secondary:       #121213;
-  --bg-tertiary:        #18181a;
-  --bg-elevated:        #1e1e20;
-  --bg-overlay:         #252527;
+  /* ── Surfaces ── */
+  --background:         #FAF8F5;
+  --bg-primary:         #FAF8F5;
+  --bg-secondary:       #FFFFFF;
+  --bg-tertiary:        #F4F1EC;
+  --bg-elevated:        #FFFFFF;
+  --bg-overlay:         #FFFFFF;
 
-  /* ── Borders (Sleek warm borders) ── */
-  --border-color:        #222224;
-  --border-color-subtle: #18181a;
-  --border-color-strong: #2d2d30;
+  /* ── Borders ── */
+  --border-color:        #E8E5DF;
+  --border-subtle:       #F0EDE7;
+  --border-strong:       #D6D2CA;
 
   /* ── Text ── */
-  --text-primary:   #f3f3f5;
-  --text-secondary: #a3a3a6;
-  --text-muted:     #666669;
-  --foreground:     #f3f3f5;
+  --text-primary:   #17181C;
+  --text-secondary: #52525B;
+  --text-muted:     #8B8B92;
+  --foreground:     #17181C;
 
-  /* ── Accent: Sunset Terracotta — refined, organic, premium ── */
-  --accent:         #e05c3d;
-  --accent-hover:   #cc4e31;
-  --accent-light:   #e77c62;
-  --accent-dim:     rgba(224, 92, 61, 0.08);
-  --accent-glow:    rgba(224, 92, 61, 0.12);
+  /* ── Accent: Burnt Sienna ── */
+  --accent:         #C2410C;
+  --accent-hover:   #9A3412;
+  --accent-light:   #FED7AA;
+  --accent-dim:     rgba(194, 65, 12, 0.08);
+  --accent-glow:    rgba(194, 65, 12, 0.12);
 
-  /* ── Secondary: Amber Gold (warm ochre/amber) ── */
-  --amber:      #d99c3b;
-  --amber-dim:  rgba(217, 156, 59, 0.10);
-
-  /* ── Semantic ── */
-  --success:  #22c55e;             /* green-500 */
-  --warning:  #eab308;             /* yellow-500 */
-  --danger:   #ef4444;             /* red-500 */
-  --info:     #38bdf8;             /* sky-400 */
+  /* ── Semantic (deep, not neon) ── */
+  --success:  #15803D;
+  --warning:  #B45309;
+  --danger:   #B91C1C;
+  --info:     #1D4ED8;
 
   /* ── Radius scale ── */
   --radius-sm:  6px;
   --radius-md:  10px;
   --radius-lg:  14px;
   --radius-xl:  18px;
-  --radius-2xl: 24px;
 }
 
 /* =============================================
@@ -65,8 +59,8 @@
   --color-bg-elevated:        var(--bg-elevated);
   --color-bg-overlay:         var(--bg-overlay);
   --color-border-color:       var(--border-color);
-  --color-border-subtle:      var(--border-color-subtle);
-  --color-border-strong:      var(--border-color-strong);
+  --color-border-subtle:      var(--border-subtle);
+  --color-border-strong:      var(--border-strong);
   --color-text-primary:       var(--text-primary);
   --color-text-secondary:     var(--text-secondary);
   --color-text-muted:         var(--text-muted);
@@ -77,7 +71,6 @@
   --color-warning:            var(--warning);
   --color-danger:             var(--danger);
   --color-info:               var(--info);
-  --color-amber:              var(--amber);
 
   --font-sans:    'Inter', system-ui, sans-serif;
   --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -98,7 +91,7 @@ body {
   color: var(--text-primary);
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -115,129 +108,13 @@ h1, h2, h3, h4, h5, h6 {
 /* =============================================
    SCROLLBAR
    ============================================= */
-::-webkit-scrollbar          { width: 5px; height: 5px; }
-::-webkit-scrollbar-track    { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb    { background: var(--border-color-strong); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::-webkit-scrollbar          { width: 6px; height: 6px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--border-strong); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* =============================================
-   GLASS — Clean zinc-based, not blue-tinted
-   ============================================= */
-.glass {
-  background: rgba(17, 17, 19, 0.80);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(39, 39, 42, 0.80);
-}
-
-.glass-sm {
-  background: rgba(24, 24, 27, 0.90);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(39, 39, 42, 0.70);
-}
-
-.glass-strong {
-  background: rgba(9, 9, 11, 0.92);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(63, 63, 70, 0.60);
-}
-
-/* =============================================
-   GRADIENT UTILITIES — Refined Sunset Terracotta
-   ============================================= */
-.gradient-text {
-  background: linear-gradient(135deg, #e77c62 0%, #e05c3d 50%, #cc4e31 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* For secondary/subtle accents (amber gold) */
-.gradient-text-amber {
-  background: linear-gradient(135deg, #f5d0a9 0%, #d99c3b 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-bg-primary {
-  background: linear-gradient(135deg, #e05c3d 0%, #cc4e31 100%);
-}
-
-/* =============================================
-   CARD HOVER — terracotta shadow, not orange
-   ============================================= */
-.card-hover {
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow  0.22s ease,
-              border-color 0.18s ease;
-}
-
-.card-hover:hover {
-  transform: translateY(-4px) scale(1.005);
-  box-shadow: 0 16px 40px -12px rgba(224, 92, 61, 0.12),
-              0 4px 12px -4px rgba(0, 0, 0, 0.50);
-  border-color: rgba(224, 92, 61, 0.20) !important;
-}
-
-/* =============================================
-   SECTION LABEL — terracotta accent, not orange
-   ============================================= */
-.section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(224, 92, 61, 0.08);
-  border: 1px solid rgba(224, 92, 61, 0.20);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--accent-light);
-  font-family: 'Inter', sans-serif;
-}
-
-/* =============================================
-   CATEGORY CHIPS — distinct per genre
-   ============================================= */
-.chip-moba   { background: rgba(139, 92, 246, 0.12); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.22); }
-.chip-fps    { background: rgba(239, 68, 68, 0.10);  color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.22); }
-.chip-rpg    { background: rgba(234, 179, 8, 0.10);  color: #fde68a; border: 1px solid rgba(234, 179, 8, 0.22); }
-.chip-sports { background: rgba(34, 197, 94, 0.10);  color: #86efac; border: 1px solid rgba(34, 197, 94, 0.22); }
-.chip-other  { background: rgba(56, 189, 248, 0.10); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.22); }
-
-/* =============================================
-   ANIMATIONS
-   ============================================= */
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1;   transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.8); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-5px); }
-}
-
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
-}
-
-.animate-float       { animation: float 4s ease-in-out infinite; }
-.animate-pulse-dot   { animation: pulse-dot 2s ease-in-out infinite; }
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmer 2.5s linear infinite;
-}
 
 /* =============================================
    FOCUS & SELECTION
@@ -249,6 +126,76 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::selection {
-  background: rgba(224, 92, 61, 0.15);
-  color: #e77c62;
+  background: rgba(194, 65, 12, 0.15);
+  color: var(--accent-hover);
+}
+
+/* =============================================
+   ANIMATIONS — minimal, only what's functional
+   ============================================= */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.8); }
+}
+
+.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+/* =============================================
+   LEGACY CLASS FALLBACKS (flat versions)
+   Kept so admin/auth pages using old class names
+   remain usable without a full redesign.
+   Render flat surfaces — no glass, no glow.
+   ============================================= */
+.glass,
+.glass-sm,
+.glass-strong {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.gradient-text {
+  color: var(--accent);
+}
+
+.gradient-text-amber {
+  color: var(--warning);
+}
+
+.gradient-bg-primary {
+  background: var(--accent);
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-dim);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  font-family: 'Inter', sans-serif;
+}
+
+.card-hover {
+  transition: border-color 0.2s ease;
+}
+.card-hover:hover {
+  border-color: var(--accent);
+}
+
+.chip-moba,
+.chip-fps,
+.chip-rpg,
+.chip-sports,
+.chip-other {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.animate-float,
+.animate-shimmer {
+  animation: none;
 }

@@ -73,17 +73,17 @@ export default async function HomePage() {
       {/* 5. Why Choose Us */}
       <WhyChooseUsSection />
 
-      {/* 6. Payment Methods */}
-      <PaymentMethodsSection />
-
-      {/* 7. Testimonials */}
+      {/* 6. Testimonials */}
       <TestimonialsSection />
 
-      {/* 8. FAQ */}
+      {/* 7. FAQ */}
       <FAQSection />
 
-      {/* 9. Bottom CTA Banner */}
+      {/* 8. Bottom CTA Banner */}
       <CTABannerSection />
+
+      {/* 9. Payment Methods */}
+      <PaymentMethodsSection />
     </div>
   );
 }
