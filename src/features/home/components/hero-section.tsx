@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ArrowRight, Sparkles, ShieldCheck, Activity } from "lucide-react";
+import { Search, X, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 
 interface GameSearchItem {
   id: string;
@@ -26,12 +26,19 @@ const MOCK_TRANSACTIONS = [
 export function HeroSection({ games }: HeroSectionProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<GameSearchItem[]>([]);
   const [isFocused, setIsFocused] = useState(false);
   const [txIndex, setTxIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
+  // Derive suggestions during render - no useEffect needed
+  const suggestions = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return games
+      .filter((g) => g.name.toLowerCase().includes(q) || g.category.toLowerCase().includes(q))
+      .slice(0, 6);
+  }, [searchQuery, games]);
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -42,26 +49,12 @@ export function HeroSection({ games }: HeroSectionProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Cycle live transactions
   useEffect(() => {
     const interval = setInterval(() => {
       setTxIndex((prev) => (prev + 1) % MOCK_TRANSACTIONS.length);
     }, 4000);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setSuggestions([]);
-      return;
-    }
-    const q = searchQuery.toLowerCase();
-    setSuggestions(
-      games
-          .filter((g) => g.name.toLowerCase().includes(q) || g.category.toLowerCase().includes(q))
-          .slice(0, 6)
-    );
-  }, [searchQuery, games]);
 
   const handleSelect = (slug: string) => {
     router.push(`/games/${slug}`);
@@ -71,27 +64,22 @@ export function HeroSection({ games }: HeroSectionProps) {
 
   return (
     <section className="w-full relative overflow-hidden bg-bg-primary">
-      {/* Decorative asymmetric background pattern */}
-      <div className="absolute top-0 right-0 w-[45%] h-[70%] bg-bg-tertiary rounded-bl-[120px] -z-10 pointer-events-none opacity-50 lg:opacity-100" />
-      <div 
-        className="absolute top-20 right-20 w-32 h-32 bg-accent/5 rounded-full blur-2xl pointer-events-none -z-10" 
-      />
+      {/* Subtle geometric background accent */}
+      <div className="absolute top-0 right-0 w-[40%] h-[60%] bg-accent/[0.03] rounded-bl-[100px] -z-10 pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 lg:pt-14 lg:pb-24">
-        {/* Design Read declared: Game top-up storefront for Indonesian gamers with clean/editorial theme */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center">
-          
-          {/* ── Left: Text content & Search ── */}
+
+          {/* Left: Text content & Search */}
           <div className="space-y-6 lg:max-w-xl">
-            {/* Title: 2-line cap with sienna emphasis */}
             <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.25rem] text-text-primary tracking-tight leading-[1.1] font-bold">
-              Top Up Game <br />
-              <span className="italic font-bold text-accent">Instan</span> &amp; Hemat
+              Top Up Game
+              <br />
+              <span className="text-accent">Instan</span> &amp; Hemat
             </h1>
 
-            {/* Subtext: 20-word limit */}
             <p className="text-base sm:text-lg text-text-secondary leading-relaxed max-w-lg">
-              Platform top up otomatis 24/7. Dapatkan Diamond, UC, VP, dan Crystals game favoritmu dengan harga terbaik.
+              Platform top up otomatis 24/7. Diamond, UC, VP, dan Crystals game favoritmu dengan harga terbaik.
             </p>
 
             {/* Search Widget */}
@@ -106,7 +94,7 @@ export function HeroSection({ games }: HeroSectionProps) {
                 <Search className="w-5 h-5 text-text-muted shrink-0" />
                 <input
                   type="text"
-                  placeholder="Cari game favoritmu (Mobile Legends, Valorant...)"
+                  placeholder="Cari game favoritmu..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsFocused(true)}
@@ -122,10 +110,9 @@ export function HeroSection({ games }: HeroSectionProps) {
                 )}
               </div>
 
-              {/* Suggestions Dropdown */}
               <AnimatePresence>
                 {isFocused && (searchQuery || suggestions.length > 0) && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
@@ -161,41 +148,39 @@ export function HeroSection({ games }: HeroSectionProps) {
               </AnimatePresence>
             </div>
 
-            {/* Live Trust Indicators */}
-            <div className="flex items-center gap-4 text-xs text-text-muted pt-2">
+            {/* Trust signals - clean, no decorative dots */}
+            <div className="flex items-center gap-5 text-xs text-text-muted pt-2">
               <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse-dot" />
-                <span>Proses 10 Detik</span>
+                <Zap className="w-3.5 h-3.5 text-accent" />
+                <span>Proses 10 detik</span>
               </div>
-              <span className="text-border-strong">|</span>
+              <div className="w-px h-3 bg-border-color" />
               <div className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-accent" />
-                <span>Otomatis 24/7</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-success" />
+                <span>Mitra resmi game</span>
               </div>
             </div>
           </div>
 
-          {/* ── Right: Premium Editorial Hero Visual with Live Activity ── */}
+          {/* Right: Hero Visual + Live Activity */}
           <div className="relative w-full max-w-md mx-auto">
-            {/* The Framed Hero Artwork Visual */}
-            <div className="relative rounded-[32px] overflow-hidden border border-border-color bg-bg-secondary p-2 shadow-lg">
+            {/* Hero artwork frame */}
+            <div className="relative rounded-[28px] overflow-hidden border border-border-color bg-bg-secondary p-1.5 shadow-lg">
               <img
                 src="/games/valorant.jpg"
                 alt="TopUpKu Gaming Banner"
-                className="w-full h-auto aspect-square object-cover rounded-[24px] bg-bg-tertiary"
+                className="w-full h-auto aspect-square object-cover rounded-[22px] bg-bg-tertiary"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none rounded-[24px] m-2" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none rounded-[22px] m-1.5" />
             </div>
 
-            {/* Floating Live Transaction Widget (Tactile Social Proof) */}
-            <div className="absolute -bottom-6 -left-4 sm:-left-6 w-[260px] sm:w-[280px] bg-bg-secondary/95 backdrop-blur-md border border-border-color rounded-2xl p-4 shadow-xl z-20">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border-subtle">
+            {/* Floating Live Transaction Widget */}
+            <div className="absolute -bottom-5 -left-3 sm:-left-5 w-[250px] sm:w-[270px] bg-bg-secondary border border-border-color rounded-2xl p-4 shadow-xl z-20">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border-subtle">
                 <div className="w-2 h-2 rounded-full bg-success animate-pulse-dot" />
-                <span className="text-[10px] font-bold text-text-primary uppercase tracking-wider flex items-center gap-1">
-                  <Activity className="w-3 h-3 text-accent" />
+                <span className="text-[10px] font-bold text-text-primary uppercase tracking-wider">
                   Transaksi Aktif
                 </span>
-                <span className="text-[9px] text-text-muted ml-auto font-medium">Sistem 24h</span>
               </div>
 
               <div className="h-10 overflow-hidden relative">
@@ -217,7 +202,7 @@ export function HeroSection({ games }: HeroSectionProps) {
                       </span>
                     </div>
                     <div className="flex justify-between items-baseline mt-0.5">
-                      <span className="text-[10px] text-text-secondary truncate max-w-[160px]">
+                      <span className="text-[10px] text-text-secondary truncate max-w-[150px]">
                         Beli {MOCK_TRANSACTIONS[txIndex].item}
                       </span>
                       <span className="text-[9px] text-text-muted">
@@ -229,19 +214,17 @@ export function HeroSection({ games }: HeroSectionProps) {
               </div>
             </div>
 
-            {/* Floating Top-up Success Badge */}
-            <div className="absolute -top-4 -right-4 bg-bg-secondary border border-border-color rounded-2xl p-3 shadow-lg flex items-center gap-2.5 z-20">
-              <div className="w-7 h-7 rounded-lg bg-success-dim text-success flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4.5 h-4.5" />
+            {/* Floating Guarantee Badge */}
+            <div className="absolute -top-3 -right-3 bg-bg-secondary border border-border-color rounded-2xl p-3 shadow-lg flex items-center gap-2.5 z-20">
+              <div className="w-7 h-7 rounded-lg bg-success/10 text-success flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-4 h-4" />
               </div>
               <div className="text-left">
                 <p className="text-[10px] font-bold text-text-primary leading-none">Garansi Legal</p>
                 <p className="text-[9px] text-text-muted mt-0.5 leading-none">Mitra Resmi Game</p>
               </div>
             </div>
-
           </div>
-
         </div>
       </div>
     </section>

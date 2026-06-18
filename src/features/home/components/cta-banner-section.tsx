@@ -7,55 +7,44 @@ const TRUST_INDICATORS = [
   "Garansi Refund",
 ] as const;
 
-/* Inline cross-hatch SVG encoded as a data URI — renders a subtle
-   repeating pattern without an extra network request. */
-const crossHatchSvg = `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L20 20M20 0L0 20' stroke='%23D6D2CA' stroke-width='.5' fill='none' opacity='.45'/%3E%3C/svg%3E")`;
+/* Cross-hatch pattern - subtle texture without network request */
+const crossHatchSvg = `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L20 20M20 0L0 20' stroke='%232E3138' stroke-width='.5' fill='none' opacity='.3'/%3E%3C/svg%3E")`;
 
 export function CTABannerSection() {
   return (
     <section className="w-full py-16 sm:py-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className="relative overflow-hidden rounded-2xl border border-border-color bg-bg-tertiary"
+          className="relative overflow-hidden rounded-2xl border border-accent/20 bg-bg-tertiary"
           style={{ backgroundImage: crossHatchSvg, backgroundSize: "20px 20px" }}
         >
-          {/* Content wrapper */}
           <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10 px-8 py-12 sm:px-12 lg:px-16">
-            {/* ── Left: text block ── */}
             <div className="max-w-xl space-y-4">
-              <span className="section-label">
-                <Zap className="w-3.5 h-3.5" />
-                Top Up dalam 10 Detik
-              </span>
-
               <h2 className="font-display font-bold text-2xl sm:text-3xl text-text-primary tracking-tight leading-tight">
                 Siap Top Up Game Favoritmu?
               </h2>
 
               <p className="text-sm text-text-secondary leading-relaxed max-w-md">
-                Bergabunglah bersama ratusan ribu gamer Indonesia yang sudah
-                mempercayakan kebutuhan top up mereka kepada TopUpKu.
+                Bergabung bersama ratusan ribu gamer Indonesia yang mempercayakan kebutuhan top up mereka ke TopUpKu.
               </p>
 
-              {/* Trust indicators */}
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
                 {TRUST_INDICATORS.map((label) => (
                   <span
                     key={label}
                     className="inline-flex items-center gap-1.5 text-xs font-medium text-text-muted"
                   >
-                    <span className="text-accent text-sm leading-none">✓</span>
+                    <Zap className="w-3 h-3 text-accent" />
                     {label}
                   </span>
                 ))}
               </div>
             </div>
 
-            {/* ── Right: actions ── */}
             <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto shrink-0">
               <Link
                 href="/#games"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold bg-accent hover:bg-accent-hover text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold bg-accent hover:bg-accent-hover text-bg-primary transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Zap className="w-4 h-4" />
                 Pilih Game & Top Up

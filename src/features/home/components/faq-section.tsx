@@ -5,12 +5,12 @@ import { ChevronDown, MessageCircle } from "lucide-react";
 import Link from "next/link";
 
 const FAQS = [
-  { q: "Berapa lama proses top up setelah pembayaran?", a: "Biasanya 3–10 detik setelah pembayaran dikonfirmasi. Pada kondisi tertentu bisa memakan waktu hingga 5 menit." },
+  { q: "Berapa lama proses top up setelah pembayaran?", a: "Biasanya 3-10 detik setelah pembayaran dikonfirmasi. Pada kondisi tertentu bisa memakan waktu hingga 5 menit." },
   { q: "Apakah top up di TopUpKu aman untuk akun game saya?", a: "100% aman. Kami tidak memerlukan password akun game Anda, hanya User ID yang bersifat publik." },
   { q: "Metode pembayaran apa saja yang tersedia?", a: "QRIS, GoPay, OVO, Dana, ShopeePay, serta transfer bank BCA, BNI, BRI, dan Mandiri via Midtrans." },
   { q: "Bagaimana jika diamond tidak masuk setelah bayar?", a: "Hubungi CS kami via WhatsApp dengan nomor order. Kami akan proses ulang atau refund penuh." },
   { q: "Apakah ada kode promo atau diskon?", a: "Ya! Gunakan kode HEMATNEW untuk diskon Rp5.000. Pantau halaman Promo untuk penawaran terbaru." },
-  { q: "Bagaimana cara cek status transaksi?", a: "Buka 'Cek Transaksi' di navbar, masukkan nomor order dan email yang dipakai saat checkout." },
+  { q: "Bagaimana cara cek status transaksi?", a: "Buka 'Cek Order' di navbar, masukkan nomor order dan email yang dipakai saat checkout." },
 ];
 
 function FAQItem({ faq, isOpen, onToggle }: { faq: { q: string; a: string }; isOpen: boolean; onToggle: () => void }) {
@@ -42,14 +42,12 @@ export function FAQSection() {
     <section className="w-full py-16 sm:py-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10 lg:gap-16">
-          {/* Header column */}
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <p className="section-label mb-3">FAQ</p>
             <h2 className="font-display font-bold text-2xl sm:text-3xl text-text-primary tracking-tight mb-3">
-              Pertanyaan yang Sering Ditanyakan
+              Pertanyaan Umum
             </h2>
             <p className="text-sm text-text-muted leading-relaxed mb-6">
-              Tidak menemukan jawaban? Langsung tanyakan ke tim kami — biasanya kami balas dalam hitungan menit.
+              Tidak menemukan jawaban? Tanyakan langsung ke tim kami - biasanya balas dalam hitungan menit.
             </p>
 
             <Link
@@ -61,7 +59,6 @@ export function FAQSection() {
             </Link>
           </div>
 
-          {/* Accordion column */}
           <div className="flex flex-col gap-2">
             {FAQS.map((faq, i) => (
               <FAQItem key={i} faq={faq} isOpen={openIdx === i} onToggle={() => setOpenIdx(openIdx === i ? null : i)} />

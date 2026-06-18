@@ -21,10 +21,10 @@ interface GameSectionProps {
 }
 
 const categories = [
-  { id: "ALL", label: "Semua Game", icon: LayoutGrid },
+  { id: "ALL", label: "Semua", icon: LayoutGrid },
   { id: "MOBA", label: "MOBA", icon: Sword },
-  { id: "FPS", label: "FPS / Shooter", icon: Target },
-  { id: "RPG", label: "RPG / Fantasy", icon: Sparkles },
+  { id: "FPS", label: "FPS", icon: Target },
+  { id: "RPG", label: "RPG", icon: Sparkles },
 ];
 
 export function GameSection({ games }: GameSectionProps) {
@@ -34,20 +34,18 @@ export function GameSection({ games }: GameSectionProps) {
   return (
     <section id="games" className="w-full py-12 sm:py-20 bg-bg-primary">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section header — Left-aligned editorial title without duplicate eyebrows */}
+
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-4 border-b border-border-color">
           <div>
             <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-text-primary tracking-tight">
               Pilih Game &amp; Top Up
             </h2>
             <p className="text-xs text-text-muted mt-1">
-              Menampilkan {filtered.length} game yang siap diisi instan 24/7
+              {filtered.length} game tersedia, proses instan 24/7
             </p>
           </div>
 
-          {/* Filter tabs — Premium sliding indicator layout */}
-          <div className="flex items-center gap-1 p-1 bg-bg-tertiary/60 border border-border-subtle rounded-xl flex-shrink-0 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1 p-1 bg-bg-tertiary border border-border-subtle rounded-xl flex-shrink-0 overflow-x-auto no-scrollbar">
             {categories.map((cat) => {
               const Icon = cat.icon;
               const isSelected = selected === cat.id;
@@ -58,15 +56,14 @@ export function GameSection({ games }: GameSectionProps) {
                   onClick={() => setSelected(cat.id)}
                   className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
                     isSelected
-                      ? "text-white"
+                      ? "text-bg-primary"
                       : "text-text-secondary hover:text-text-primary"
                   }`}
                 >
-                  {/* Sliding background indicator */}
                   {isSelected && (
                     <motion.div
                       layoutId="activeCategoryTab"
-                      className="absolute inset-0 bg-accent rounded-lg shadow-sm -z-10"
+                      className="absolute inset-0 bg-accent rounded-lg -z-10"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -78,10 +75,9 @@ export function GameSection({ games }: GameSectionProps) {
           </div>
         </div>
 
-        {/* Games Grid */}
         <AnimatePresence mode="popLayout">
           {filtered.length > 0 ? (
-            <motion.div 
+            <motion.div
               layout
               className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
             >
@@ -99,18 +95,18 @@ export function GameSection({ games }: GameSectionProps) {
               ))}
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-24 rounded-3xl border border-border-color bg-bg-secondary shadow-sm"
+              className="flex flex-col items-center justify-center py-24 rounded-2xl border border-border-color bg-bg-secondary"
             >
               <LayoutGrid className="w-12 h-12 text-text-muted mb-4 stroke-[1.5]" />
               <p className="text-sm font-semibold text-text-muted">Tidak ada game di kategori ini.</p>
-              <button 
+              <button
                 onClick={() => setSelected("ALL")}
-                className="mt-4 px-4 py-2 bg-accent/5 hover:bg-accent/10 text-accent rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                className="mt-4 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-xl text-xs font-bold transition-colors cursor-pointer"
               >
-                Tampilkan Semua Game
+                Tampilkan Semua
               </button>
             </motion.div>
           )}

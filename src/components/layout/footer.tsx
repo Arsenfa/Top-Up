@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Zap, Mail, Phone, MessageCircle } from "lucide-react";
+import { Zap, Mail, Phone } from "lucide-react";
 
 const POPULAR_GAMES = [
   { name: "Mobile Legends", href: "/games/mobile-legends" },
@@ -33,9 +33,9 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
-            <Link href="/" className="flex items-center gap-2 w-fit">
+            <Link href="/" className="flex items-center gap-2.5 w-fit">
               <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-                <Zap className="w-4 h-4 text-white" />
+                <Zap className="w-4 h-4 text-bg-primary" />
               </div>
               <span className="font-display font-extrabold text-lg tracking-tight text-text-primary">
                 TopUp<span className="text-accent">Ku</span>
@@ -43,8 +43,7 @@ export function Footer() {
             </Link>
 
             <p className="text-sm text-text-muted leading-relaxed">
-              Platform top up game online terpercaya. Diamond, koin, UC, dan voucher
-              game dengan harga hemat &amp; pengiriman instan.
+              Platform top up game terpercaya. Diamond, koin, UC, dan voucher game dengan harga hemat &amp; pengiriman instan.
             </p>
 
             <div className="flex flex-col gap-1.5 mt-1">
@@ -125,7 +124,7 @@ export function Footer() {
             &copy; {year} TopUpKu. Hak Cipta Dilindungi.
           </p>
           <div className="flex items-center gap-1.5 text-xs text-text-muted">
-            <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse-dot" />
+            <span className="w-1.5 h-1.5 rounded-full bg-success" />
             Semua sistem berjalan normal
           </div>
         </div>

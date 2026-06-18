@@ -19,7 +19,7 @@ interface PromoCarouselProps {
 
 export function PromoCarousel({ banners }: PromoCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [direction, setDirection] = useState(0);
 
   useEffect(() => {
     if (banners.length <= 1) return;
@@ -61,11 +61,10 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
 
   return (
     <div className="relative w-full py-4">
-      {/* Container with premium editorial split layout */}
-      <div 
-        className="relative rounded-[24px] border border-border-color bg-bg-secondary shadow-sm overflow-hidden group min-h-[360px] md:min-h-[280px] lg:min-h-[320px] flex flex-col md:grid md:grid-cols-[1.1fr_0.9fr] lg:grid-cols-[1.2fr_0.8fr]"
+      <div
+        className="relative rounded-[20px] border border-border-color bg-bg-secondary overflow-hidden group min-h-[360px] md:min-h-[280px] lg:min-h-[320px] flex flex-col md:grid md:grid-cols-[1.1fr_0.9fr] lg:grid-cols-[1.2fr_0.8fr]"
       >
-        {/* Left Side: Content Panel (Editorial Card Style) */}
+        {/* Content Panel */}
         <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center bg-bg-secondary relative z-10">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
@@ -78,32 +77,28 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="space-y-4"
             >
-              {/* Category Tag */}
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-dim text-accent text-[10px] font-bold uppercase tracking-wider">
                 <Tag className="w-3 h-3" />
                 Promo Spesial
               </div>
 
-              {/* Title */}
               <h3 className="font-display font-extrabold text-xl sm:text-2xl lg:text-3xl text-text-primary leading-[1.15] tracking-tight line-clamp-2">
                 {currentBanner.title}
               </h3>
 
-              {/* Subtitle */}
               {currentBanner.subtitle && (
                 <p className="text-sm text-text-secondary leading-relaxed max-w-sm line-clamp-3">
                   {currentBanner.subtitle}
                 </p>
               )}
 
-              {/* CTA Link */}
               {currentBanner.linkUrl && (
                 <div className="pt-2">
                   <Link
                     href={currentBanner.linkUrl}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm hover:shadow-md"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-bg-primary transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                   >
-                    Klaim Promo Sekarang
+                    Klaim Promo
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -112,7 +107,7 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
           </AnimatePresence>
         </div>
 
-        {/* Right Side: Image Panel (Full Bleed, slightly offset with mask) */}
+        {/* Image Panel */}
         <div className="relative h-48 md:h-full overflow-hidden bg-bg-tertiary">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
@@ -125,37 +120,34 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="absolute inset-0"
             >
-              <img 
-                src={currentBanner.imageUrl} 
-                alt={currentBanner.title} 
-                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" 
+              <img
+                src={currentBanner.imageUrl}
+                alt={currentBanner.title}
+                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
-              {/* Soft overlay mask */}
               <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-bg-secondary via-transparent to-transparent opacity-60 md:opacity-100 pointer-events-none" />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Carousel Navigation Buttons */}
+        {/* Carousel Navigation */}
         {banners.length > 1 && (
           <>
-            {/* Prev Button */}
             <button
               onClick={handlePrev}
-              className="absolute left-4 bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 z-20 w-8 h-8 rounded-full bg-bg-secondary border border-border-color text-text-primary hover:border-accent hover:text-accent flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
+              className="absolute left-4 bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 z-20 w-8 h-8 rounded-full bg-bg-secondary border border-border-color text-text-primary hover:border-accent hover:text-accent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            
-            {/* Next Button */}
+
             <button
               onClick={handleNext}
-              className="absolute left-14 md:left-auto md:right-4 bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 z-20 w-8 h-8 rounded-full bg-bg-secondary border border-border-color text-text-primary hover:border-accent hover:text-accent flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
+              className="absolute left-14 md:left-auto md:right-4 bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 z-20 w-8 h-8 rounded-full bg-bg-secondary border border-border-color text-text-primary hover:border-accent hover:text-accent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
 
-            {/* Stepper Dots (Asymmetric indicator at bottom right) */}
+            {/* Stepper dots */}
             <div className="absolute right-6 bottom-6 z-20 hidden md:flex gap-1.5">
               {banners.map((_, i) => (
                 <button
@@ -165,8 +157,8 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
                     setActiveIndex(i);
                   }}
                   className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    i === activeIndex 
-                      ? "w-6 bg-accent" 
+                    i === activeIndex
+                      ? "w-6 bg-accent"
                       : "w-1.5 bg-border-strong hover:bg-text-muted"
                   }`}
                 />

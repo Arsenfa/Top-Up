@@ -36,18 +36,18 @@ export function Header() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 transition-colors duration-200 ${
+        className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-bg-primary/95 border-b border-border-color"
-            : "bg-bg-primary border-b border-transparent"
+            ? "bg-bg-primary/90 backdrop-blur-md border-b border-border-color"
+            : "bg-bg-primary/70 backdrop-blur-sm border-b border-transparent"
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group shrink-0">
+            <Link href="/" className="flex items-center gap-2.5 group shrink-0">
               <div className="flex items-center justify-center w-8 h-8 bg-accent rounded-lg">
-                <Zap className="w-4 h-4 text-white" strokeWidth={2.5} />
+                <Zap className="w-4 h-4 text-bg-primary" strokeWidth={2.5} />
               </div>
               <span className="font-display font-extrabold text-lg tracking-tight text-text-primary">
                 TopUp<span className="text-accent">Ku</span>
@@ -62,7 +62,7 @@ export function Header() {
                   href={link.href}
                   className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
                     isActive(link.href)
-                      ? "text-accent bg-accent/5"
+                      ? "text-accent bg-accent-dim"
                       : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary"
                   }`}
                 >
@@ -82,7 +82,7 @@ export function Header() {
               </Link>
               <Link
                 href="/#games"
-                className="flex items-center gap-1.5 px-5 py-2 rounded-xl text-sm font-semibold bg-accent hover:bg-accent-hover text-white transition-colors duration-200"
+                className="flex items-center gap-1.5 px-5 py-2 rounded-xl text-sm font-semibold bg-accent hover:bg-accent-hover text-bg-primary transition-colors duration-200"
               >
                 <Gamepad2 className="w-4 h-4" />
                 Top Up
@@ -103,12 +103,12 @@ export function Header() {
 
       {/* Mobile Drawer Overlay */}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-opacity duration-200 ${
+        className={`fixed inset-0 z-40 md:hidden transition-opacity duration-300 ${
           isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setIsMenuOpen(false)}
       >
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/60" />
       </div>
 
       {/* Mobile Drawer Panel */}
@@ -138,7 +138,7 @@ export function Header() {
                 onClick={() => setIsMenuOpen(false)}
                 className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                   isActive(link.href)
-                    ? "bg-accent/10 text-accent"
+                    ? "bg-accent-dim text-accent"
                     : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary"
                 }`}
               >
@@ -151,7 +151,7 @@ export function Header() {
             <Link
               href="/#games"
               onClick={() => setIsMenuOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold bg-accent hover:bg-accent-hover text-white transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold bg-accent hover:bg-accent-hover text-bg-primary transition-colors"
             >
               <Zap className="w-4 h-4" />
               Top Up Sekarang
