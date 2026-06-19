@@ -1,9 +1,6 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
-export const dynamic = "force-dynamic";
-
-import { prisma } from "@/lib/prisma";
-export const dynamic = "force-dynamic";
-
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Query order by invoice number
+    const { prisma } = await import("@/lib/prisma");
     const order = await prisma.order.findUnique({
       where: { invoiceNumber: invoiceNumber.trim() },
     });
@@ -28,7 +25,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify if email matches
     if (order.customerEmail.toLowerCase() !== email.trim().toLowerCase()) {
       return NextResponse.json(
         { success: false, error: "Alamat email tidak cocok dengan pesanan ini." },

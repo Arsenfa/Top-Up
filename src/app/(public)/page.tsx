@@ -1,5 +1,6 @@
+export const dynamic = "force-dynamic";
+
 import React from "react";
-import { prisma } from "@/lib/prisma";
 import { HeroSection } from "@/features/home/components/hero-section";
 import { PromoCarousel } from "@/features/home/components/promo-carousel";
 import { GameSection } from "@/features/home/components/game-section";
@@ -10,9 +11,9 @@ import { TestimonialsSection } from "@/features/home/components/testimonials-sec
 import { FAQSection } from "@/features/home/components/faq-section";
 import { CTABannerSection } from "@/features/home/components/cta-banner-section";
 
-export const revalidate = 60;
-
 export default async function HomePage() {
+  const { prisma } = await import("@/lib/prisma");
+
   // Banners
   const banners = await prisma.banner.findMany({
     where: { isActive: true },

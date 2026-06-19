@@ -1,6 +1,7 @@
+export const dynamic = "force-dynamic";
+
 import React from "react";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { GameCard } from "@/components/shared/game-card";
 import { Input } from "@/components/ui/input";
 import { Search, Gamepad, ArrowUpDown } from "lucide-react";
@@ -19,6 +20,8 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
   const q = params.q || "";
   const category = params.category || "ALL";
   const sort = params.sort || "name_asc";
+
+  const { prisma } = await import("@/lib/prisma");
 
   const whereClause: any = { isActive: true };
   if (q.trim() !== "") {
@@ -47,7 +50,6 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
         </p>
       </div>
 
-      {/* Filter Toolbar */}
       <div className="p-5 rounded-2xl bg-bg-secondary border border-border-color flex flex-col md:flex-row items-center justify-between gap-4">
         <form method="GET" action="/games" className="w-full md:max-w-xs relative flex items-center">
           <Input id="q" name="q" placeholder="Cari game..." defaultValue={q} icon={<Search className="w-4 h-4 text-text-muted" />} className="w-full py-2.5" />

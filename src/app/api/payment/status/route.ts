@@ -1,12 +1,6 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
-export const dynamic = "force-dynamic";
-
-import { prisma } from "@/lib/prisma";
-export const dynamic = "force-dynamic";
-
-import { midtransSnap } from "@/lib/midtrans";
-export const dynamic = "force-dynamic";
-
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,7 +14,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 1. Fetch order from database
+    const { prisma } = await import("@/lib/prisma");
     const order = await prisma.order.findUnique({
       where: { invoiceNumber },
     });
@@ -32,12 +26,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // If already successful or failed/expired, return immediately to save API calls
     if (order.status === "SUCCESS" || order.status === "FAILED" || order.status === "EXPIRED") {
       return NextResponse.json({ success: true, status: order.status });
     }
 
-    // 2. Fetch status from Midtrans
     let transactionStatus = "PENDING";
     let paidAt: Date | null = null;
     let completedAt: Date | null = null;
@@ -46,14 +38,16 @@ export async function GET(request: NextRequest) {
     let rawResponse = "";
 
     try {
-      const statusResponse = await midtransSnap.transaction.status(invoiceNumber);
+      const { getMidtransSnap } = await import("@/lib/midtrans");
+      const snap = getMidtransSnap();
+      const statusResponse = await snap.transaction.status(invoiceNumber);
       rawResponse = JSON.stringify(statusResponse);
       const { transaction_status, fraud_status, payment_type, transaction_id, settlement_time } = statusResponse;
 
       paymentType = payment_type || order.paymentMethod;
       transactionId = transaction_id || order.midtransTransactionId;
 
-      if (transaction_status === "settlement" || 
+      if (transaction_status === "settlement" ||
          (transaction_status === "capture" && fraud_status === "accept")) {
         transactionStatus = "SUCCESS";
         paidAt = settlement_time ? new Date(settlement_time) : new Date();
@@ -65,7 +59,6 @@ export async function GET(request: NextRequest) {
       }
     } catch (err: any) {
       console.warn("Failed to fetch status from Midtrans API:", err.message);
-      // In mock/sandbox dev mode, let's auto-settle pending transactions after 30 seconds for test ease
       const elapsed = Date.now() - new Date(order.createdAt).getTime();
       if (order.status === "PENDING" && elapsed > 30000) {
         transactionStatus = "SUCCESS";
@@ -76,7 +69,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 3. Update database if status changed
     if (transactionStatus !== order.status) {
       await prisma.order.update({
         where: { id: order.id },

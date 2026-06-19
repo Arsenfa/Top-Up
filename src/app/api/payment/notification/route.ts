@@ -1,14 +1,8 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
-export const dynamic = "force-dynamic";
-
 import crypto from "crypto";
-export const dynamic = "force-dynamic";
 
-import { prisma } from "@/lib/prisma";
-export const dynamic = "force-dynamic";
-
-
-// Helper to verify Midtrans Signature Key
 function verifySignature(
   orderId: string,
   statusCode: string,
@@ -44,7 +38,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Verify Midtrans signature
     const serverKey = process.env.MIDTRANS_SERVER_KEY || "";
     const isValid = verifySignature(order_id, status_code, gross_amount, signature_key, serverKey);
 
@@ -53,7 +46,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid signature verified." }, { status: 403 });
     }
 
-    // 2. Fetch the corresponding order
+    const { prisma } = await import("@/lib/prisma");
     const order = await prisma.order.findUnique({
       where: { invoiceNumber: order_id },
     });
@@ -63,23 +56,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Order not found in system." }, { status: 404 });
     }
 
-    // 3. Map status code & transaction status
     let orderStatus = "PENDING";
     let paidAt: Date | null = null;
     let completedAt: Date | null = null;
 
-    if (transaction_status === "settlement" || 
+    if (transaction_status === "settlement" ||
        (transaction_status === "capture" && fraud_status === "accept")) {
       orderStatus = "SUCCESS";
       paidAt = new Date();
-      completedAt = new Date(); // Simulating instant fulfillment
+      completedAt = new Date();
     } else if (transaction_status === "pending") {
       orderStatus = "PENDING";
     } else if (["deny", "expire", "cancel", "failure"].includes(transaction_status)) {
       orderStatus = "EXPIRED";
     }
 
-    // 4. Update the order in the database
     await prisma.order.update({
       where: { id: order.id },
       data: {
@@ -94,7 +85,6 @@ export async function POST(request: NextRequest) {
 
     console.log(`Order ${order_id} successfully updated to status: ${orderStatus}`);
 
-    // Return 200 OK to Midtrans
     return NextResponse.json({ success: true, message: "Webhook processed." });
   } catch (error) {
     console.error("Webhook processing error:", error);

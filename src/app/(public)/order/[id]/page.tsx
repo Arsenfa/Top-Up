@@ -1,6 +1,7 @@
+export const dynamic = "force-dynamic";
+
 import React from "react";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { OrderStatus } from "@/features/orders/components/order-status";
 
 interface OrderPageProps {
@@ -12,7 +13,8 @@ interface OrderPageProps {
 export default async function OrderDetailPage({ params }: OrderPageProps) {
   const { id } = await params;
 
-  // Query order by invoice number
+  const { prisma } = await import("@/lib/prisma");
+
   const order = await prisma.order.findUnique({
     where: { invoiceNumber: id },
     include: {
@@ -25,10 +27,8 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
     notFound();
   }
 
-  // Map Date fields to match expected client component prop signatures
   const serializedOrder = {
     ...order,
-    // Ensure nested relations are passed through
     game: {
       name: order.game.name,
       imageUrl: order.game.imageUrl,

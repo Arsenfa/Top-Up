@@ -1,6 +1,7 @@
+export const dynamic = "force-dynamic";
+
 import React from "react";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { Card, CardHeader, CardBody } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -8,22 +9,19 @@ import { Button } from "@/components/ui/button";
 import { DollarSign, ShoppingCart, Clock, Gamepad2, ArrowRight } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
-export const revalidate = 0; // Dynamic rendering for dashboard
-
 export default async function AdminDashboardPage() {
-  // 1. Fetch metrics
+  const { prisma } = await import("@/lib/prisma");
+
   const totalOrders = await prisma.order.count();
   const pendingOrders = await prisma.order.count({ where: { status: "PENDING" } });
   const activeGames = await prisma.game.count({ where: { isActive: true } });
 
-  // Sum successful orders revenue
   const successfulOrders = await prisma.order.findMany({
     where: { status: "SUCCESS" },
     select: { amount: true },
   });
   const totalRevenue = successfulOrders.reduce((sum, order) => sum + order.amount, 0);
 
-  // 2. Fetch 5 recent orders
   const recentOrders = await prisma.order.findMany({
     take: 5,
     orderBy: { createdAt: "desc" },
@@ -80,7 +78,6 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="flex flex-col gap-8 w-full">
-      {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl font-extrabold text-text-primary">Dashboard</h1>
@@ -90,7 +87,6 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map((stat, index) => (
           <Card key={index} variant="default">
@@ -111,7 +107,6 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      {/* Recent Orders Section */}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-extrabold text-text-primary uppercase tracking-wider">
