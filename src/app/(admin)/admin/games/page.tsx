@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import React from "react";
 import { GameListManager } from "@/features/admin/components/game-list-manager";
 

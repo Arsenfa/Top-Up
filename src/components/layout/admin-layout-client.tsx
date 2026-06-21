@@ -95,6 +95,7 @@ export function AdminLayoutClient({ children }: AdminLayoutClientProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch
                 onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer border
                   ${

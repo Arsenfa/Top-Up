@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import React from "react";
 import { PromoListManager } from "@/features/admin/components/promo-list-manager";
 

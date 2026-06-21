@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import React from "react";
 import { ProductListManager } from "@/features/admin/components/product-list-manager";
 

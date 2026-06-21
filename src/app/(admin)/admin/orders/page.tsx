@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import React from "react";
 import { OrderListManager } from "@/features/admin/components/order-list-manager";
 
