@@ -131,38 +131,42 @@ export async function createCheckoutOrder(input: CheckoutInput) {
       snapToken = transaction.token;
       redirectUrl = transaction.redirect_url;
     } catch (err: any) {
-      console.error("Error creating Midtrans transaction:", err);
-      // We will fallback to a simulated checkout token if Midtrans is not configured
-      // so the app remains fully functional for demonstration.
-      snapToken = `MOCK-SNAP-TOKEN-${Math.random().toString(36).substring(2, 12).toUpperCase()}`;
-      redirectUrl = `/order/${invoiceNumber}`;
+      console.error("Error creating Midtrans transaction:", err.message || err);
+      return { success: false, error: "Gagal menghubungkan ke gateway pembayaran. Silakan coba beberapa saat lagi." };
     }
 
-    // 7. Create Order in database
-    const order = await prisma.order.create({
-      data: {
-        invoiceNumber,
-        gameId: game.id,
-        productId: product.id,
-        customerName,
-        customerEmail,
-        customerPhone,
-        gameAccountInfo: JSON.stringify(gameAccountInfo),
-        amount: finalAmount,
-        status: "PENDING",
-        midtransOrderId: invoiceNumber,
-        midtransSnapToken: snapToken,
-        midtransResponse: JSON.stringify({ token: snapToken, redirect_url: redirectUrl }),
-      },
-    });
+    // 7. Create Order + increment promo usage in an atomic transaction
+    const [order] = await prisma.$transaction(async (tx) => {
+      if (appliedPromoId) {
+        // Atomic check-and-increment: only updates if usage is still under limit
+        const updated = await tx.$executeRawUnsafe(
+          `UPDATE "Promo" SET "usageCount" = "usageCount" + 1 WHERE id = $1 AND "isActive" = true AND ("usageLimit" IS NULL OR "usageCount" < "usageLimit")`,
+          appliedPromoId
+        );
+        if (updated === 0) {
+          throw new Error("Kuota penggunaan promo sudah habis.");
+        }
+      }
 
-    // 8. If promo was successfully applied, increment its usage count
-    if (appliedPromoId) {
-      await prisma.promo.update({
-        where: { id: appliedPromoId },
-        data: { usageCount: { increment: 1 } },
+      const created = await tx.order.create({
+        data: {
+          invoiceNumber,
+          gameId: game.id,
+          productId: product.id,
+          customerName,
+          customerEmail,
+          customerPhone,
+          gameAccountInfo: JSON.stringify(gameAccountInfo),
+          amount: finalAmount,
+          status: "PENDING",
+          midtransOrderId: invoiceNumber,
+          midtransSnapToken: snapToken,
+          midtransResponse: JSON.stringify({ token: snapToken, redirect_url: redirectUrl }),
+        },
       });
-    }
+
+      return [created];
+    });
 
     return {
       success: true,

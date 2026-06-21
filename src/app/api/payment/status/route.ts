@@ -59,14 +59,7 @@ export async function GET(request: NextRequest) {
       }
     } catch (err: any) {
       console.warn("Failed to fetch status from Midtrans API:", err.message);
-      const elapsed = Date.now() - new Date(order.createdAt).getTime();
-      if (order.status === "PENDING" && elapsed > 30000) {
-        transactionStatus = "SUCCESS";
-        paidAt = new Date();
-        completedAt = new Date();
-      } else {
-        transactionStatus = order.status;
-      }
+      transactionStatus = order.status;
     }
 
     if (transactionStatus !== order.status) {
