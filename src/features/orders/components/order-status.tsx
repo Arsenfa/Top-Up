@@ -185,7 +185,7 @@ export function OrderStatus({ order }: OrderStatusProps) {
         <Card>
           <CardBody className="flex flex-col items-center text-center p-8 sm:p-12">
             <div className="mb-6">{statusConfig.icon}</div>
-            <Badge variant={statusConfig.variant} className="mb-4 text-xs px-3.5 py-1.5 font-bold uppercase tracking-wider">{statusConfig.label}</Badge>
+            <Badge variant={statusConfig.variant} className="mb-4 text-xs px-3.5 py-1.5 font-semibold">{statusConfig.label}</Badge>
             <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight mb-2">
               Invoice: {order.invoiceNumber}
             </h1>
@@ -264,7 +264,7 @@ export function OrderStatus({ order }: OrderStatusProps) {
             </div>
 
             <div className="border-t border-border-color pt-6 mt-2 flex flex-col gap-3.5">
-              <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">Informasi Kontak</h3>
+              <h3 className="text-xs font-bold text-text-muted">Informasi Kontak</h3>
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
                 <div className="flex items-center gap-2.5 text-sm text-text-secondary">
                   <Mail className="w-4.5 h-4.5 text-accent shrink-0" />

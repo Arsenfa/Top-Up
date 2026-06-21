@@ -35,12 +35,12 @@ export function GameCard({ game, startPrice }: GameCardProps) {
             src={game.imageUrl}
             alt={game.name}
             loading="lazy"
-            className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+            className="w-full h-full object-cover object-center transition-all duration-500 ease-out group-hover:brightness-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-70 pointer-events-none" />
 
           {isPopular && (
-            <span className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent text-bg-primary text-[9px] font-bold uppercase tracking-wider">
+            <span className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent text-bg-primary text-[10px] font-semibold">
               <Sparkles className="w-2.5 h-2.5" />
               Populer
             </span>
@@ -49,7 +49,7 @@ export function GameCard({ game, startPrice }: GameCardProps) {
 
         {/* Content */}
         <div className="p-4 flex flex-col flex-grow">
-          <span className="text-[9px] font-bold text-text-muted uppercase tracking-widest leading-none">
+          <span className="text-[10px] font-semibold text-text-muted leading-none">
             {game.publisher}
           </span>
 
@@ -59,7 +59,7 @@ export function GameCard({ game, startPrice }: GameCardProps) {
 
           <div className="mt-auto pt-3 border-t border-border-subtle flex items-center justify-between">
             <div className="space-y-0.5">
-              <p className="text-[9px] font-semibold text-text-muted uppercase tracking-wider leading-none">Mulai dari</p>
+              <p className="text-[10px] font-semibold text-text-muted leading-none">Mulai dari</p>
               <p className="text-xs font-extrabold text-text-primary">
                 {startPrice ? formatPrice(startPrice) : "Rp 1.000"}
               </p>

@@ -112,7 +112,7 @@ export function PaymentMethodsSection() {
             <p className="text-xs text-text-secondary leading-relaxed">
               Transaksi dienkripsi aman dan diproses otomatis melalui Midtrans.
             </p>
-            <div className="flex items-center gap-1.5 pt-1 text-[10px] text-text-muted font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 pt-1 text-[10px] text-text-muted font-semibold">
               <span>Partner</span>
               <span className="text-border-strong">|</span>
               <MidtransLogo className="h-3.5 w-auto text-text-muted" />

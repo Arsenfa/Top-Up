@@ -55,7 +55,7 @@ export function SettingsForm({ configs }: SettingsFormProps) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
       <Card variant="default">
         <CardHeader>
-          <h2 className="text-sm font-extrabold text-text-primary uppercase tracking-wider">
+          <h2 className="text-sm font-extrabold text-text-primary">
             Pengaturan Umum Website
           </h2>
         </CardHeader>
@@ -81,7 +81,7 @@ export function SettingsForm({ configs }: SettingsFormProps) {
 
       <Card variant="default">
         <CardHeader>
-          <h2 className="text-sm font-extrabold text-text-primary uppercase tracking-wider">
+          <h2 className="text-sm font-extrabold text-text-primary">
             Kontak Customer Service
           </h2>
         </CardHeader>
@@ -114,7 +114,7 @@ export function SettingsForm({ configs }: SettingsFormProps) {
 
       <Card variant="default" className="opacity-75">
         <CardHeader>
-          <h2 className="text-sm font-extrabold text-text-primary uppercase tracking-wider">
+          <h2 className="text-sm font-extrabold text-text-primary">
             Kredensial Payment Gateway (Midtrans)
           </h2>
         </CardHeader>

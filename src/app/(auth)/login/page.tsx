@@ -17,15 +17,8 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-bg-secondary/20 to-bg-primary relative overflow-hidden px-4">
-      {/* Background radial highlight */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px]" />
-      </div>
-
-      <div className="relative z-10 w-full flex justify-center">
-        <LoginForm />
-      </div>
+    <div className="min-h-screen w-full flex items-center justify-center bg-bg-primary px-4">
+      <LoginForm />
     </div>
   );
 }

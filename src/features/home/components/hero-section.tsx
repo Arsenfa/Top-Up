@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { Search, X, ArrowRight, ShieldCheck, Zap, Users, Clock } from "lucide-react";
 
 interface GameSearchItem {
   id: string;
@@ -16,18 +16,10 @@ interface HeroSectionProps {
   games: GameSearchItem[];
 }
 
-const MOCK_TRANSACTIONS = [
-  { id: 1, user: "Gamer 8127****", game: "Mobile Legends", item: "257 Diamonds", time: "Baru saja" },
-  { id: 2, user: "Gamer 3041****", game: "Valorant", item: "300 VP", time: "2 detik lalu" },
-  { id: 3, user: "Gamer 9274****", game: "Genshin Impact", item: "500 Genesis Crystals", time: "5 detik lalu" },
-  { id: 4, user: "Gamer 4810****", game: "Free Fire", item: "140 Diamonds", time: "8 detik lalu" },
-];
-
 export function HeroSection({ games }: HeroSectionProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  const [txIndex, setTxIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Derive suggestions during render - no useEffect needed
@@ -47,13 +39,6 @@ export function HeroSection({ games }: HeroSectionProps) {
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTxIndex((prev) => (prev + 1) % MOCK_TRANSACTIONS.length);
-    }, 4000);
-    return () => clearInterval(interval);
   }, []);
 
   const handleSelect = (slug: string) => {
@@ -85,9 +70,9 @@ export function HeroSection({ games }: HeroSectionProps) {
             {/* Search Widget */}
             <div ref={containerRef} className="relative w-full max-w-lg">
               <div
-                className={`flex items-center gap-3 px-4 py-3.5 rounded-xl border transition-all duration-200 bg-bg-secondary shadow-sm ${
+                className={`flex items-center gap-3 px-4 py-3.5 rounded-xl border transition-all duration-200 bg-bg-secondary ${
                   isFocused
-                    ? "border-accent ring-2 ring-accent/10 shadow-md"
+                    ? "border-accent ring-2 ring-accent/10"
                     : "border-border-color"
                 }`}
               >
@@ -116,7 +101,7 @@ export function HeroSection({ games }: HeroSectionProps) {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border-color rounded-xl shadow-lg overflow-hidden z-30"
+                    className="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border-color rounded-xl overflow-hidden z-30 shadow-elevated"
                   >
                     {suggestions.length > 0 ? (
                       <div className="py-1">
@@ -148,7 +133,7 @@ export function HeroSection({ games }: HeroSectionProps) {
               </AnimatePresence>
             </div>
 
-            {/* Trust signals - clean, no decorative dots */}
+            {/* Trust signals — static, no mock data */}
             <div className="flex items-center gap-5 text-xs text-text-muted pt-2">
               <div className="flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5 text-accent" />
@@ -159,13 +144,17 @@ export function HeroSection({ games }: HeroSectionProps) {
                 <ShieldCheck className="w-3.5 h-3.5 text-success" />
                 <span>Mitra resmi game</span>
               </div>
+              <div className="w-px h-3 bg-border-color hidden sm:block" />
+              <div className="items-center gap-1.5 hidden sm:flex">
+                <Users className="w-3.5 h-3.5 text-info" />
+                <span>100K+ transaksi</span>
+              </div>
             </div>
           </div>
 
-          {/* Right: Hero Visual + Live Activity */}
+          {/* Right: Hero Visual — clean, no mock widget */}
           <div className="relative w-full max-w-md mx-auto">
-            {/* Hero artwork frame */}
-            <div className="relative rounded-[28px] overflow-hidden border border-border-color bg-bg-secondary p-1.5 shadow-lg">
+            <div className="relative rounded-[28px] overflow-hidden border border-border-color bg-bg-secondary p-1.5 shadow-elevated">
               <img
                 src="/games/valorant.jpg"
                 alt="TopUpKu Gaming Banner"
@@ -174,54 +163,25 @@ export function HeroSection({ games }: HeroSectionProps) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none rounded-[22px] m-1.5" />
             </div>
 
-            {/* Floating Live Transaction Widget */}
-            <div className="absolute -bottom-5 -left-3 sm:-left-5 w-[250px] sm:w-[270px] bg-bg-secondary border border-border-color rounded-2xl p-4 shadow-xl z-20">
-              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border-subtle">
-                <div className="w-2 h-2 rounded-full bg-success animate-pulse-dot" />
-                <span className="text-[10px] font-bold text-text-primary uppercase tracking-wider">
-                  Transaksi Aktif
-                </span>
-              </div>
-
-              <div className="h-10 overflow-hidden relative">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={MOCK_TRANSACTIONS[txIndex].id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0 flex flex-col justify-center"
-                  >
-                    <div className="flex justify-between items-baseline">
-                      <span className="text-[11px] font-bold text-text-primary">
-                        {MOCK_TRANSACTIONS[txIndex].user}
-                      </span>
-                      <span className="text-[9px] text-accent font-semibold">
-                        {MOCK_TRANSACTIONS[txIndex].game}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-baseline mt-0.5">
-                      <span className="text-[10px] text-text-secondary truncate max-w-[150px]">
-                        Beli {MOCK_TRANSACTIONS[txIndex].item}
-                      </span>
-                      <span className="text-[9px] text-text-muted">
-                        {MOCK_TRANSACTIONS[txIndex].time}
-                      </span>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Floating Guarantee Badge */}
-            <div className="absolute -top-3 -right-3 bg-bg-secondary border border-border-color rounded-2xl p-3 shadow-lg flex items-center gap-2.5 z-20">
+            {/* Static Guarantee Badge */}
+            <div className="absolute -top-3 -right-3 bg-bg-secondary border border-border-color rounded-2xl p-3 shadow-elevated flex items-center gap-2.5 z-20">
               <div className="w-7 h-7 rounded-lg bg-success/10 text-success flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div className="text-left">
                 <p className="text-[10px] font-bold text-text-primary leading-none">Garansi Legal</p>
                 <p className="text-[9px] text-text-muted mt-0.5 leading-none">Mitra Resmi Game</p>
+              </div>
+            </div>
+
+            {/* Static Stats Badge — replaces fake live ticker */}
+            <div className="absolute -bottom-5 -left-3 sm:-left-5 bg-bg-secondary border border-border-color rounded-2xl p-4 shadow-elevated z-20 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                <Clock className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-text-primary leading-none">Rata-rata 10 detik</p>
+                <p className="text-[9px] text-text-muted mt-0.5 leading-none">Proses otomatis 24/7</p>
               </div>
             </div>
           </div>

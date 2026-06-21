@@ -38,11 +38,15 @@
   --danger:             #FF5C5C;
   --info:               #5B8DEF;
 
-  /* ── Radius scale ── */
+  /* ── Radius scale (3 levels) ── */
   --radius-sm:  6px;
   --radius-md:  10px;
   --radius-lg:  14px;
-  --radius-xl:  18px;
+
+  /* ── Shadow scale (3 levels) ── */
+  --shadow-card:    0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-modal:    0 16px 48px rgba(0, 0, 0, 0.55), 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* =============================================
@@ -70,6 +74,17 @@
   --color-warning:            var(--warning);
   --color-danger:             var(--danger);
   --color-info:               var(--info);
+
+  /* ── Shadow tokens ── */
+  --shadow-card:              var(--shadow-card);
+  --shadow-elevated:          var(--shadow-elevated);
+  --shadow-modal:             var(--shadow-modal);
+
+  /* ── Typography scale ── */
+  --text-display:  clamp(2rem, 4vw, 3.25rem);
+  --text-heading:  1.5rem;
+  --text-body:     15px;
+  --text-caption:  13px;
 
   --font-sans:    'Geist', system-ui, sans-serif;
   --font-display: 'Geist', system-ui, sans-serif;
@@ -131,28 +146,14 @@ h1, h2, h3, h4, h5, h6 {
 /* =============================================
    ANIMATIONS — minimal, only what's functional
    ============================================= */
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: 0.4; transform: scale(0.8); }
-}
-
-.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
 
 /* =============================================
    UTILITY CLASSES
    ============================================= */
-.section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: var(--accent-dim);
-  font-size: 11px;
+.eyebrow {
+  font-size: 12px;
   font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
 .card-hover {
@@ -188,9 +189,4 @@ h1, h2, h3, h4, h5, h6 {
 
 .gradient-bg-primary {
   background: var(--accent);
-}
-
-.animate-float,
-.animate-shimmer {
-  animation: none;
 }

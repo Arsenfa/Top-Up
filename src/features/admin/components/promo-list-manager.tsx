@@ -165,7 +165,7 @@ export function PromoListManager({ initialPromos }: PromoListManagerProps) {
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Action Toolbar */}
-      <div className="glass p-5 rounded-2xl border border-border-color/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-5 rounded-2xl border border-border-color/60 flex flex-col sm:flex-row items-center justify-between gap-4">
         <Input
           id="promo-search"
           placeholder="Cari kode atau judul promo..."
@@ -255,7 +255,7 @@ export function PromoListManager({ initialPromos }: PromoListManagerProps) {
           </TableBody>
         </Table>
       ) : (
-        <div className="glass rounded-2xl p-16 text-center border border-border-color/60">
+        <div className="rounded-2xl p-16 text-center border border-border-color/60">
           <p className="text-text-secondary text-sm">Belum ada promo yang cocok.</p>
         </div>
       )}

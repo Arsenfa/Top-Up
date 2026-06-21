@@ -92,7 +92,7 @@ export default async function AdminDashboardPage() {
           <Card key={index} variant="default">
             <CardBody className="flex items-center justify-between p-6">
               <div className="flex flex-col gap-1.5">
-                <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">
+                <span className="text-[10px] text-text-secondary font-semibold">
                   {stat.label}
                 </span>
                 <span className="text-xl sm:text-2xl font-extrabold text-text-primary">
@@ -109,7 +109,7 @@ export default async function AdminDashboardPage() {
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-extrabold text-text-primary uppercase tracking-wider">
+          <h2 className="text-sm font-extrabold text-text-primary">
             Transaksi Terbaru
           </h2>
           <Link href="/admin/orders">
@@ -156,9 +156,9 @@ export default async function AdminDashboardPage() {
             </TableBody>
           </Table>
         ) : (
-          <div className="glass rounded-2xl p-10 text-center border border-border-color/60">
+          <Card variant="default" className="p-10 text-center">
             <p className="text-text-secondary text-sm">Belum ada transaksi pembelian masuk.</p>
-          </div>
+          </Card>
         )}
       </div>
     </div>

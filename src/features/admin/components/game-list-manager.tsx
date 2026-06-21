@@ -179,7 +179,7 @@ export function GameListManager({ initialGames }: GameListManagerProps) {
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Action Toolbar */}
-      <div className="glass p-5 rounded-2xl border border-border-color/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-5 rounded-2xl border border-border-color/60 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
           {/* Search */}
           <Input
@@ -313,7 +313,7 @@ export function GameListManager({ initialGames }: GameListManagerProps) {
           </TableBody>
         </Table>
       ) : (
-        <div className="glass rounded-2xl p-16 text-center border border-border-color/60">
+        <div className="rounded-2xl p-16 text-center border border-border-color/60">
           <p className="text-text-secondary text-sm">Belum ada game terdaftar yang cocok.</p>
         </div>
       )}

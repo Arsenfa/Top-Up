@@ -38,8 +38,8 @@ export function Header() {
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-bg-primary/90 backdrop-blur-md border-b border-border-color"
-            : "bg-bg-primary/70 backdrop-blur-sm border-b border-transparent"
+            ? "bg-bg-primary/95 border-b border-border-color"
+            : "bg-bg-primary border-b border-transparent"
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

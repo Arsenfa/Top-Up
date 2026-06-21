@@ -82,7 +82,7 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Filters Toolbar */}
-      <div className="glass p-5 rounded-2xl border border-border-color/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-5 rounded-2xl border border-border-color/60 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Search Input */}
         <div className="w-full sm:max-w-xs">
           <Input
@@ -97,7 +97,7 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
 
         {/* Status Filter */}
         <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-          <span className="text-xs text-text-secondary font-semibold uppercase tracking-wider hidden sm:inline">
+          <span className="text-xs text-text-secondary font-semibold hidden sm:inline">
             Status:
           </span>
           <Select
@@ -201,7 +201,7 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
           </TableBody>
         </Table>
       ) : (
-        <div className="glass rounded-2xl p-16 text-center border border-border-color/60">
+        <div className="rounded-2xl p-16 text-center border border-border-color/60">
           <p className="text-text-secondary text-sm">Tidak ada transaksi yang cocok dengan kriteria filter.</p>
         </div>
       )}

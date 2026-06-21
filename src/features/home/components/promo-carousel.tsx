@@ -77,7 +77,7 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="space-y-4"
             >
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-dim text-accent text-[10px] font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-dim text-accent text-[10px] font-semibold">
                 <Tag className="w-3 h-3" />
                 Promo Spesial
               </div>

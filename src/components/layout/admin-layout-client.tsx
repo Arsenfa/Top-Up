@@ -67,7 +67,7 @@ export function AdminLayoutClient({ children }: AdminLayoutClientProps) {
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-3 bg-bg-secondary border border-border-color rounded-xl text-text-secondary hover:text-text-primary transition-all shadow-xl backdrop-blur"
+          className="p-3 bg-bg-secondary border border-border-color rounded-xl text-text-secondary hover:text-text-primary transition-all shadow-elevated"
         >
           {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
