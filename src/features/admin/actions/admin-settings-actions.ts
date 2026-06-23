@@ -14,7 +14,7 @@ export async function updateSiteConfigs(configs: ConfigInput[]) {
       await prisma.siteConfig.upsert({
         where: { key: config.key },
         update: { value: config.value },
-        create: { key: config.key, value: config.value, description: `Pengaturan ${config.key}` },
+        create: { key: config.key, value: config.value },
       });
     }
 

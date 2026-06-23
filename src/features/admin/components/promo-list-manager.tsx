@@ -15,7 +15,7 @@ import { formatCurrency } from "@/lib/utils";
 interface PromoItem {
   id: string;
   code: string;
-  title: string;
+  title: string | null;
   description: string;
   type: string;
   value: number;
@@ -70,7 +70,7 @@ export function PromoListManager({ initialPromos }: PromoListManagerProps) {
     setEditingPromo(p);
     setFormData({
       code: p.code,
-      title: p.title,
+      title: p.title ?? "",
       description: p.description,
       type: p.type,
       value: p.value,
@@ -159,7 +159,7 @@ export function PromoListManager({ initialPromos }: PromoListManagerProps) {
 
   const filteredPromos = promos.filter((p) =>
     p.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.title.toLowerCase().includes(searchQuery.toLowerCase())
+    p.title?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (

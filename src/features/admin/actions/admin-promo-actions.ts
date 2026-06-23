@@ -31,7 +31,7 @@ export async function deletePromo(promoId: string) {
 interface UpsertPromoInput {
   id?: string;
   code: string;
-  title: string;
+  title: string | null;
   description: string;
   type: string;
   value: number;
@@ -56,7 +56,15 @@ export async function upsertPromo(input: UpsertPromoInput) {
       if (existing) {
         return { success: false, error: "Kode promo ini sudah terdaftar." };
       }
-      await prisma.promo.create({ data });
+      // ponytail: default date range = now until next year
+      const now = new Date();
+      await prisma.promo.create({
+        data: {
+          ...data,
+          startDate: now,
+          endDate: new Date(now.getFullYear() + 1, 11, 31),
+        },
+      });
     }
 
     revalidatePath("/admin/promos");

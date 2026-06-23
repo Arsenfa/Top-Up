@@ -16,9 +16,9 @@ interface GameItem {
   id: string;
   name: string;
   slug: string;
-  description: string;
+  description: string | null;
   imageUrl: string;
-  iconUrl: string;
+  iconUrl: string | null;
   publisher: string;
   category: string;
   isFeatured: boolean;
@@ -81,9 +81,9 @@ export function GameListManager({ initialGames }: GameListManagerProps) {
     setFormData({
       name: game.name,
       slug: game.slug,
-      description: game.description,
+      description: game.description ?? "",
       imageUrl: game.imageUrl,
-      iconUrl: game.iconUrl,
+      iconUrl: game.iconUrl ?? "",
       publisher: game.publisher,
       category: game.category,
       isFeatured: game.isFeatured,

@@ -73,7 +73,7 @@ export function CheckoutForm({ game, products }: CheckoutFormProps) {
   const [appliedPromo, setAppliedPromo] = useState<{
     id: string;
     code: string;
-    title: string;
+    title: string | null;
     type: string;
     value: number;
     maxDiscount: number | null;

@@ -178,7 +178,7 @@ export async function createCheckoutOrder(input: CheckoutInput) {
           gameAccountInfo: JSON.stringify(gameAccountInfo),
           amount: finalAmount,
           status: "PENDING",
-          midtransOrderId: invoiceNumber,
+          midtransTransactionId: invoiceNumber,
           midtransSnapToken: snapToken,
           midtransResponse: JSON.stringify({ token: snapToken, redirect_url: redirectUrl }),
         },

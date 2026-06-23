@@ -34,10 +34,10 @@ async function main() {
   // Create Site Configurations
   await prisma.siteConfig.createMany({
     data: [
-      { key: "site_name", value: "TopUpKu", description: "Nama website" },
-      { key: "site_description", value: "Layanan Top Up Game Tercepat, Termurah, Terpercaya di Indonesia.", description: "Deskripsi SEO website" },
-      { key: "contact_whatsapp", value: "6281234567890", description: "Nomor WhatsApp CS" },
-      { key: "contact_email", value: "support@topupku.com", description: "Email Support CS" },
+      { key: "site_name", value: "TopUpKu" },
+      { key: "site_description", value: "Layanan Top Up Game Tercepat, Termurah, Terpercaya di Indonesia." },
+      { key: "contact_whatsapp", value: "6281234567890" },
+      { key: "contact_email", value: "support@topupku.com" },
     ],
   });
   console.log("Site configurations created.");
@@ -64,25 +64,28 @@ async function main() {
   console.log("Banners created.");
 
   // Create Promos
+  const now = new Date();
   await prisma.promo.createMany({
     data: [
       {
         code: "HEMATNEW",
-        title: "Promo Pengguna Baru",
         description: "Diskon Rp5.000 dengan minimal pembelian Rp20.000",
         type: "FIXED",
         value: 5000,
         minPurchase: 20000,
+        startDate: new Date(now.getFullYear(), 0, 1),
+        endDate: new Date(now.getFullYear() + 1, 11, 31),
         isActive: true,
       },
       {
         code: "SUPERML",
-        title: "Pesta Diamond MLBB",
         description: "Diskon 10% maksimum Rp15.000 khusus game Mobile Legends",
         type: "PERCENTAGE",
         value: 10,
         minPurchase: 30000,
         maxDiscount: 15000,
+        startDate: new Date(now.getFullYear(), 0, 1),
+        endDate: new Date(now.getFullYear() + 1, 11, 31),
         isActive: true,
       },
     ],
@@ -94,7 +97,7 @@ async function main() {
     {
       name: "Mobile Legends: Bang Bang",
       slug: "mobile-legends",
-      description: "Top Up Diamond Mobile Legends murah, aman, cepat, and legal 100%. Cukup masukkan User ID & Server ID Anda, pilih nominal, dan bayar!",
+      description: "Top Up Diamond Mobile Legends murah, aman, cepat, and legal 100%.",
       imageUrl: "/games/mobile-legends.jpg",
       iconUrl: "/games/mobile-legends.jpg",
       publisher: "Moonton",
@@ -102,6 +105,7 @@ async function main() {
       isFeatured: true,
       isPopular: true,
       requiredFields: "userId,serverId",
+      sortOrder: 1,
       products: [
         { name: "5 Diamonds", price: 1579, originalPrice: 2000 },
         { name: "12 Diamonds", price: 3688, originalPrice: 4500 },
@@ -121,7 +125,7 @@ async function main() {
     {
       name: "Free Fire",
       slug: "free-fire",
-      description: "Beli Diamond Free Fire murah dan cepat. Proses instan 24 jam. Masukkan Player ID Free Fire Anda, pilih nominal Diamond, dan selesaikan pembayaran!",
+      description: "Beli Diamond Free Fire murah dan cepat. Proses instan 24 jam.",
       imageUrl: "/games/free-fire.jpg",
       iconUrl: "/games/free-fire.jpg",
       publisher: "Garena",
@@ -129,6 +133,7 @@ async function main() {
       isFeatured: true,
       isPopular: true,
       requiredFields: "userId",
+      sortOrder: 2,
       products: [
         { name: "5 Diamonds", price: 1000, originalPrice: 1500 },
         { name: "12 Diamonds", price: 2000, originalPrice: 3000 },
@@ -143,7 +148,7 @@ async function main() {
     {
       name: "Genshin Impact",
       slug: "genshin-impact",
-      description: "Top Up Genesis Crystals Genshin Impact instan. Masukkan UID & Server, pilih nominal, pilih metode pembayaran, dan Crystals langsung masuk!",
+      description: "Top Up Genesis Crystals Genshin Impact instan.",
       imageUrl: "/games/genshin-impact.jpg",
       iconUrl: "/games/genshin-impact.jpg",
       publisher: "COGNOSPHERE",
@@ -151,6 +156,7 @@ async function main() {
       isFeatured: true,
       isPopular: true,
       requiredFields: "userId,serverId",
+      sortOrder: 3,
       products: [
         { name: "60 Genesis Crystals", price: 16000, originalPrice: 17500 },
         { name: "300 Genesis Crystals", price: 79000, originalPrice: 85000 },
@@ -163,7 +169,7 @@ async function main() {
     {
       name: "PUBG Mobile",
       slug: "pubg-mobile",
-      description: "Beli UC PUBG Mobile murah, cepat, dan terpercaya. Cukup masukkan Character ID Anda, pilih jumlah UC, lakukan pembayaran, dan UC langsung dikirim!",
+      description: "Beli UC PUBG Mobile murah, cepat, dan terpercaya.",
       imageUrl: "/games/pubg-mobile.jpg",
       iconUrl: "/games/pubg-mobile.jpg",
       publisher: "Level Infinite",
@@ -171,6 +177,7 @@ async function main() {
       isFeatured: false,
       isPopular: true,
       requiredFields: "userId",
+      sortOrder: 4,
       products: [
         { name: "60 UC", price: 14000, originalPrice: 16000 },
         { name: "325 UC", price: 70000, originalPrice: 80000 },
@@ -183,7 +190,7 @@ async function main() {
     {
       name: "Valorant",
       slug: "valorant",
-      description: "Beli Valorant Points (VP) murah dan aman. Masukkan Riot ID + Tagline, pilih nominal VP, dan bayar lewat QRIS, e-wallet, atau bank transfer!",
+      description: "Beli Valorant Points (VP) murah dan aman.",
       imageUrl: "/games/valorant.jpg",
       iconUrl: "/games/valorant.jpg",
       publisher: "Riot Games",
@@ -191,6 +198,7 @@ async function main() {
       isFeatured: true,
       isPopular: true,
       requiredFields: "userId",
+      sortOrder: 5,
       products: [
         { name: "125 Valorant Points", price: 15000, originalPrice: 18000 },
         { name: "420 Valorant Points", price: 47000, originalPrice: 52000 },
@@ -203,7 +211,7 @@ async function main() {
     {
       name: "Honkai: Star Rail",
       slug: "honkai-star-rail",
-      description: "Beli Oneiric Shards Honkai: Star Rail instan. Masukkan UID & Server, pilih nominal, dan bayar!",
+      description: "Beli Oneiric Shards Honkai: Star Rail instan.",
       imageUrl: "/games/honkai-star-rail.jpg",
       iconUrl: "/games/honkai-star-rail.jpg",
       publisher: "COGNOSPHERE",
@@ -211,6 +219,7 @@ async function main() {
       isFeatured: false,
       isPopular: false,
       requiredFields: "userId,serverId",
+      sortOrder: 6,
       products: [
         { name: "60 Oneiric Shards", price: 16000, originalPrice: 17500 },
         { name: "300 Oneiric Shards", price: 79000, originalPrice: 85000 },
@@ -221,7 +230,7 @@ async function main() {
     {
       name: "Call of Duty Mobile",
       slug: "call-of-duty-mobile",
-      description: "Beli CP Call of Duty Mobile murah dan cepat. Masukkan OpenID Anda, pilih nominal CP, dan selesaikan transaksi!",
+      description: "Beli CP Call of Duty Mobile murah dan cepat.",
       imageUrl: "/games/call-of-duty-mobile.jpg",
       iconUrl: "/games/call-of-duty-mobile.jpg",
       publisher: "Garena",
@@ -229,6 +238,7 @@ async function main() {
       isFeatured: false,
       isPopular: false,
       requiredFields: "userId",
+      sortOrder: 7,
       products: [
         { name: "80 CP", price: 15000, originalPrice: 17000 },
         { name: "240 CP", price: 45000, originalPrice: 50000 },
@@ -239,7 +249,7 @@ async function main() {
     {
       name: "Arena of Valor",
       slug: "arena-of-valor",
-      description: "Top Up Voucher Arena of Valor (AoV) aman dan cepat. Masukkan Player ID Anda, pilih nominal Voucher, dan bayar!",
+      description: "Top Up Voucher Arena of Valor (AoV) aman dan cepat.",
       imageUrl: "/games/arena-of-valor.jpg",
       iconUrl: "/games/arena-of-valor.jpg",
       publisher: "Garena",
@@ -247,6 +257,7 @@ async function main() {
       isFeatured: false,
       isPopular: false,
       requiredFields: "userId",
+      sortOrder: 8,
       products: [
         { name: "20 Vouchers", price: 6000, originalPrice: 7500 },
         { name: "50 Vouchers", price: 14000, originalPrice: 17000 },
@@ -262,10 +273,7 @@ async function main() {
       data: {
         ...gameFields,
         products: {
-          create: products.map((prod, index) => ({
-            ...prod,
-            sortOrder: index,
-          })),
+          create: products,
         },
       },
     });
