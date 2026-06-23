@@ -27,10 +27,17 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
     notFound();
   }
 
+  // ponytail: a demo order is one whose token was never issued by Midtrans.
+  const isDemo =
+    !order.midtransSnapToken ||
+    order.midtransSnapToken.startsWith("demo-") ||
+    order.midtransSnapToken.startsWith("mock-");
+
   const serializedOrder = {
     ...order,
     game: {
       name: order.game.name,
+      slug: order.game.slug,
       imageUrl: order.game.imageUrl,
     },
     product: {
@@ -38,5 +45,5 @@ export default async function OrderDetailPage({ params }: OrderPageProps) {
     },
   };
 
-  return <OrderStatus order={serializedOrder} />;
+  return <OrderStatus order={serializedOrder} isDemo={isDemo} />;
 }

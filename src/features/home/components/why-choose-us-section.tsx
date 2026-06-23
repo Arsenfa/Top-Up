@@ -1,80 +1,82 @@
+"use client";
+
 import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Clock, ShieldOff, Tag, Headset } from "lucide-react";
 
 const REASONS = [
   {
-    title: "Masuk dalam hitungan detik",
-    desc: "Setelah pembayaran terkonfirmasi, item langsung dikirim otomatis ke akun game. Gak perlu nunggu admin online.",
     icon: Clock,
     stat: "±10s",
-    statLabel: "proses kirim",
+    title: "Masuk dalam hitungan detik",
+    desc: "Setelah bayar terkonfirmasi, item langsung dikirim otomatis ke akun game. Gak perlu nunggu admin online.",
   },
   {
-    title: "Gak perlu login akun game",
-    desc: "Cukup masukkan User ID yang bersifat publik. Kami tidak pernah minta password atau data sensitif akun kamu.",
     icon: ShieldOff,
     stat: "0",
-    statLabel: "password diminta",
+    title: "Gak perlu kasih password",
+    desc: "Cukup masukkan User ID yang bersifat publik. Kami tidak pernah minta password atau data sensitif.",
   },
   {
-    title: "Harga mendekati resmi",
-    desc: "Cek sendiri, bandingkan dengan harga in-game. Sesekali ada promo eksklusif yang bikin lebih hemat.",
     icon: Tag,
     stat: "±3%",
-    statLabel: "selisih harga resmi",
+    title: "Harga mendekati resmi",
+    desc: "Bandingkan sendiri sama harga in-game. Sesekali ada promo eksklusif yang bikin lebih hemat.",
   },
   {
-    title: "CS jawab lewat WhatsApp",
-    desc: "Kalau ada kendala, chat tim CS lewat WhatsApp. Biasanya balas dalam beberapa menit di jam aktif.",
     icon: Headset,
     stat: "<5 mnt",
-    statLabel: "rata-rata respon",
+    title: "CS balas cepat via WhatsApp",
+    desc: "Ada kendala? Chat tim CS langsung. Biasanya balas dalam beberapa menit di jam aktif.",
   },
 ];
 
 export function WhyChooseUsSection() {
+  const reduce = useReducedMotion();
+
   return (
-    <section className="w-full py-16 sm:py-24 bg-bg-secondary border-y border-border-subtle">
+    <section className="w-full py-16 sm:py-24 bg-bg-primary">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="max-w-2xl mb-12">
+        <div className="mb-10 sm:mb-12">
           <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-text-primary tracking-tight">
-            Ini kenapa orang pake TopUpKu
+            Kenapa orang pake TopUpKu
           </h2>
-          <p className="text-sm text-text-muted mt-2 leading-relaxed">
-            Karena ribet itu musuh. Kami bikin sesimpel mungkin.
+          <p className="text-sm text-text-muted mt-2">
+            Ribet itu musuh. Kami bikin sesimpel mungkin.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {REASONS.map((r) => {
+          {REASONS.map((r, i) => {
             const Icon = r.icon;
             return (
-              <div
-                key={r.title}
-                className="group flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-bg-primary border border-border-color hover:border-border-strong transition-colors duration-200"
+              <motion.div
+                key={r.stat}
+                initial={reduce ? false : { opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.45, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-bg-secondary border border-border-subtle hover:border-accent/25 transition-colors duration-200"
               >
-                <div className="flex items-start justify-between">
-                  <div className="w-11 h-11 rounded-xl bg-accent/10 border border-accent/15 flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-accent" />
+                <div className="flex items-start justify-between gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
+                    <Icon className="w-[18px] h-[18px] text-accent" />
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-extrabold text-text-primary leading-none">
-                      {r.stat}
-                    </p>
-                  </div>
+                  <span className="text-4xl sm:text-5xl font-extrabold text-accent tabular-nums tracking-tight leading-none">
+                    {r.stat}
+                  </span>
                 </div>
 
-                <div>
-                  <h3 className="font-display font-bold text-sm text-text-primary leading-snug">
+                <div className="flex flex-col gap-1.5">
+                  <h3 className="font-display font-bold text-sm sm:text-base text-text-primary leading-snug">
                     {r.title}
                   </h3>
+                  <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
+                    {r.desc}
+                  </p>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-text-muted">{r.statLabel}</span>
-                </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

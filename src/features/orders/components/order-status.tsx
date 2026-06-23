@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency } from "@/lib/utils";
 import { updateOrderStatus, simulatePayment } from "@/features/admin/actions/admin-order-actions";
+import { completeDemoPayment } from "@/features/checkout/actions/checkout-actions";
+import { GameCurrencyIcon } from "@/lib/game-currency";
 
 interface OrderStatusProps {
   order: {
@@ -26,18 +28,37 @@ interface OrderStatusProps {
     midtransSnapToken: string | null;
     paidAt: Date | null;
     createdAt: Date;
-    game: { name: string; imageUrl: string };
+    game: { name: string; slug: string; imageUrl: string };
     product: { name: string };
   };
   isAdmin?: boolean; // Add admin flag
+  isDemo?: boolean; // Demo order: anyone can complete payment
 }
 
-export function OrderStatus({ order, isAdmin = false }: OrderStatusProps) {
+export function OrderStatus({ order, isAdmin = false, isDemo = false }: OrderStatusProps) {
   const { success, error, warning } = useToast();
   const [isCopying, setIsCopying] = useState(false);
   const [payLoading, setPayLoading] = useState(false);
   const [simLoading, setSimLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(order.status);
+
+  const handleCompleteDemo = async () => {
+    setDemoLoading(true);
+    try {
+      const res = await completeDemoPayment(order.id);
+      if (res.success) {
+        success("Pembayaran demo berhasil!");
+        setCurrentStatus("SUCCESS");
+      } else {
+        error(res.error || "Gagal menyelesaikan pembayaran demo.");
+      }
+    } catch {
+      error("Terjadi kesalahan saat menyelesaikan pembayaran demo.");
+    } finally {
+      setDemoLoading(false);
+    }
+  };
 
   const handleSimulateSuccess = async () => {
     // Double-check: only in development and for admins
@@ -215,15 +236,26 @@ export function OrderStatus({ order, isAdmin = false }: OrderStatusProps) {
             <p className="text-sm sm:text-base text-text-secondary leading-relaxed max-w-lg">{statusConfig.description}</p>
 
             {currentStatus === "PENDING" && (
-              <div className="flex flex-col sm:flex-row gap-3 mt-8">
-                {order.midtransSnapToken && (
-                  <Button onClick={handlePayNow} isLoading={payLoading}>Selesaikan Pembayaran</Button>
-                )}
-                {/* Only show simulation button in development and for admins */}
-                {process.env.NODE_ENV === "development" && isAdmin && (
-                  <Button onClick={handleSimulateSuccess} variant="outline" isLoading={simLoading}>
-                    Simulasi Bayar Sukses (Dev Only)
-                  </Button>
+              <div className="flex flex-col items-center gap-3 mt-8">
+                {isDemo ? (
+                  <>
+                    <Button onClick={handleCompleteDemo} isLoading={demoLoading}>Selesaikan Pembayaran (Demo)</Button>
+                    <p className="text-[11px] text-text-muted max-w-xs">
+                      Mode demo: tidak ada pembayaran sungguhan. Klik untuk menyimulasikan transaksi berhasil.
+                    </p>
+                  </>
+                ) : (
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {order.midtransSnapToken && (
+                      <Button onClick={handlePayNow} isLoading={payLoading}>Selesaikan Pembayaran</Button>
+                    )}
+                    {/* Only show simulation button in development and for admins */}
+                    {process.env.NODE_ENV === "development" && isAdmin && (
+                      <Button onClick={handleSimulateSuccess} variant="outline" isLoading={simLoading}>
+                        Simulasi Bayar Sukses (Dev Only)
+                      </Button>
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -253,7 +285,10 @@ export function OrderStatus({ order, isAdmin = false }: OrderStatusProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 pt-2">
               <div className="flex flex-col gap-1.5">
                 <span className="text-xs text-text-muted font-medium">Nominal Top Up</span>
-                <span className="text-sm sm:text-base font-bold text-text-primary">{order.product.name}</span>
+                <span className="flex items-center gap-1.5 text-sm sm:text-base font-bold text-text-primary">
+                  <GameCurrencyIcon slug={order.game.slug} className="w-4 h-4" />
+                  {order.product.name}
+                </span>
               </div>
               <div className="flex flex-col gap-1.5">
                 <span className="text-xs text-text-muted font-medium">Total Bayar</span>

@@ -111,8 +111,8 @@ model Promo {
   value        Int
   minPurchase  Int       @default(0)
   maxDiscount  Int?
-  startDate    DateTime
-  endDate      DateTime
+  startDate    DateTime?
+  endDate      DateTime?
   usageLimit   Int?
   usageCount   Int       @default(0)
   isActive     Boolean   @default(true)

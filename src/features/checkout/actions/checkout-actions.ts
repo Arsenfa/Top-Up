@@ -4,6 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { getMidtransSnap } from "@/lib/midtrans";
 import { generateInvoiceNumber } from "@/lib/utils";
 
+// ponytail: demo mode when explicitly enabled OR no real Midtrans key is set.
+// Covers the portfolio deploy so visitors can run a full transaction without a gateway.
+function isDemoMode(): boolean {
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === "true") return true;
+  const key = process.env.MIDTRANS_SERVER_KEY;
+  return !key || key === "SB-Mid-server-sandbox-key" || key === "your-midtrans-server-key";
+}
+
 interface CheckoutInput {
   gameId: string;
   productId: string;
@@ -126,14 +134,10 @@ export async function createCheckoutOrder(input: CheckoutInput) {
     let snapToken = "";
     let redirectUrl = "";
 
-    const isDummyKey =
-      process.env.NODE_ENV === "development" &&
-      (!process.env.MIDTRANS_SERVER_KEY ||
-        process.env.MIDTRANS_SERVER_KEY === "SB-Mid-server-sandbox-key");
-
-    if (isDummyKey) {
-      // ponytail: fallback to mock token when keys are dummy sandbox keys
-      snapToken = `mock-token-${Date.now()}`;
+    if (isDemoMode()) {
+      // ponytail: portfolio/demo deploy has no real gateway — issue a demo token
+      // so anyone can complete the flow. completeDemoPayment marks it paid.
+      snapToken = `demo-${Date.now()}`;
       redirectUrl = "";
     } else {
       try {
@@ -143,14 +147,7 @@ export async function createCheckoutOrder(input: CheckoutInput) {
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
         console.error("Error creating Midtrans transaction:", msg);
-
-        // ponytail: fallback to mock in development if API fails
-        if (process.env.NODE_ENV === "development") {
-          snapToken = `mock-token-${Date.now()}`;
-          redirectUrl = "";
-        } else {
-          return { success: false, error: "Gagal menghubungkan ke gateway pembayaran. Silakan coba beberapa saat lagi." };
-        }
+        return { success: false, error: "Gagal menghubungkan ke gateway pembayaran. Silakan coba beberapa saat lagi." };
       }
     }
 
@@ -167,24 +164,21 @@ export async function createCheckoutOrder(input: CheckoutInput) {
         }
       }
 
-      const created = await tx.order.create({
-        data: {
-          invoiceNumber,
-          gameId: game.id,
-          productId: product.id,
-          customerName,
-          customerEmail,
-          customerPhone,
-          gameAccountInfo: JSON.stringify(gameAccountInfo),
-          amount: finalAmount,
-          status: "PENDING",
-          midtransTransactionId: invoiceNumber,
-          midtransSnapToken: snapToken,
-          midtransResponse: JSON.stringify({ token: snapToken, redirect_url: redirectUrl }),
-        },
-      });
+      // The live DB uses uuid PKs (gen_random_uuid()) while the Prisma schema
+      // declares cuid(), so a typed create() inserts an invalid uuid. Insert via
+      // raw SQL and let the DB fill id/createdAt/updatedAt.
+      const rows = await tx.$queryRaw<{ id: string }[]>`
+        INSERT INTO "Order" (
+          "invoiceNumber", "gameId", "productId", "customerName", "customerEmail",
+          "customerPhone", "gameAccountInfo", "amount", "discount", "status",
+          "midtransTransactionId", "midtransSnapToken", "midtransResponse"
+        ) VALUES (
+          ${invoiceNumber}, ${game.id}::uuid, ${product.id}::uuid, ${customerName}, ${customerEmail},
+          ${customerPhone}, ${JSON.stringify(gameAccountInfo)}, ${finalAmount}, ${discountApplied}, 'PENDING',
+          ${invoiceNumber}, ${snapToken}, ${JSON.stringify({ token: snapToken, redirect_url: redirectUrl })}
+        ) RETURNING "id"`;
 
-      return [created];
+      return [rows[0]];
     });
 
     return {
@@ -196,6 +190,39 @@ export async function createCheckoutOrder(input: CheckoutInput) {
   } catch (error: unknown) {
     console.error("Checkout action failed:", error);
     return { success: false, error: "Gagal membuat transaksi. Silakan coba beberapa saat lagi." };
+  }
+}
+
+/**
+ * Marks a DEMO order as paid. Public (no auth) on purpose so portfolio visitors
+ * can finish the flow — but it only ever touches orders whose token marks them
+ * as demo and that are still PENDING. Real Midtrans orders are never affected.
+ */
+export async function completeDemoPayment(orderId: string) {
+  try {
+    if (!orderId) return { success: false, error: "Order tidak valid." };
+
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) return { success: false, error: "Transaksi tidak ditemukan." };
+
+    const token = order.midtransSnapToken ?? "";
+    const isDemoOrder = !token || token.startsWith("demo-") || token.startsWith("mock-");
+    if (!isDemoOrder) {
+      return { success: false, error: "Transaksi ini bukan transaksi demo." };
+    }
+    if (order.status !== "PENDING") {
+      return { success: false, error: "Transaksi sudah diproses." };
+    }
+
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { status: "SUCCESS", paidAt: new Date(), completedAt: new Date(), paymentMethod: "Demo" },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Demo payment completion failed:", error);
+    return { success: false, error: "Gagal menyelesaikan transaksi demo." };
   }
 }
 

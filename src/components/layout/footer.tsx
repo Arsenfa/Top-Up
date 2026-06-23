@@ -123,10 +123,16 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-border-color">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-center gap-x-4 gap-y-2 sm:justify-between">
           <p className="text-xs text-text-muted">
             &copy; {year} TopUpKu. Hak Cipta Dilindungi.
           </p>
+          <Link
+            href="/admin"
+            className="text-xs text-text-muted hover:text-accent transition-colors"
+          >
+            Admin Panel
+          </Link>
         </div>
       </div>
     </footer>

@@ -10,6 +10,7 @@ import { Card, CardHeader, CardBody, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { createCheckoutOrder, validatePromoCode } from "../actions/checkout-actions";
 import { formatCurrency } from "@/lib/utils";
+import { GameCurrencyIcon } from "@/lib/game-currency";
 
 // TypeScript declarations for Midtrans Snap
 interface MidtransResult {
@@ -185,7 +186,8 @@ export function CheckoutForm({ game, products }: CheckoutFormProps) {
 
     const { token, invoiceNumber } = result;
 
-    if (window.snap && !token.startsWith("mock-")) {
+    const isDemoToken = token.startsWith("mock-") || token.startsWith("demo-");
+    if (window.snap && !isDemoToken) {
       window.snap.pay(token, {
         onSuccess: () => { success("Pembayaran berhasil!"); router.push(`/order/${invoiceNumber}?status=success`); },
         onPending: () => { warning("Menunggu pembayaran..."); router.push(`/order/${invoiceNumber}?status=pending`); },
@@ -268,7 +270,8 @@ export function CheckoutForm({ game, products }: CheckoutFormProps) {
                         Promo
                       </span>
                     )}
-                    <span className="font-medium text-xs text-text-primary line-clamp-1 mb-1.5">{product.name}</span>
+                    <GameCurrencyIcon slug={game.slug} className="w-6 h-6 mb-1.5" />
+                    <span className="font-medium text-xs text-text-primary line-clamp-1 mb-1">{product.name}</span>
                     <span className="text-xs font-bold text-accent">{formatCurrency(product.price)}</span>
                     {hasDiscount && (
                       <span className="text-[10px] text-text-muted line-through mt-0.5">{formatCurrency(product.originalPrice!)}</span>

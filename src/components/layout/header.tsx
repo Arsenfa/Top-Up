@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, Menu, X, Receipt, Gamepad2 } from "lucide-react";
+import { Zap, Menu, X, Receipt, Gamepad2, LogIn } from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Beranda" },
@@ -76,6 +76,13 @@ export function Header() {
               >
                 <Receipt className="w-4 h-4" />
                 Cek Order
+              </Link>
+              <Link
+                href="/admin"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium text-text-secondary hover:text-text-primary border border-border-color hover:border-border-strong transition-colors duration-200"
+              >
+                <LogIn className="w-4 h-4" />
+                Login
               </Link>
               <Link
                 href="/#games"
@@ -152,6 +159,14 @@ export function Header() {
             >
               <Zap className="w-4 h-4" />
               Top Up Sekarang
+            </Link>
+            <Link
+              href="/admin"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium text-text-secondary hover:text-text-primary border border-border-color hover:border-border-strong transition-colors"
+            >
+              <LogIn className="w-4 h-4" />
+              Login Admin
             </Link>
           </div>
         </div>
