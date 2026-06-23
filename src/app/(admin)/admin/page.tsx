@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Card, CardHeader, CardBody } from "@/components/ui/card";
+import { Card, CardBody } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

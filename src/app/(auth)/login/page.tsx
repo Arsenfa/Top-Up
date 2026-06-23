@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth";
 import { LoginForm } from "@/features/auth/components/login-form";
 
 export const metadata = {
-  title: "Login Admin — TopUpKu",
+  title: "Login Admin - TopUpKu",
   description: "Portal masuk administrator untuk pengelolaan layanan TopUpKu.",
 };
 

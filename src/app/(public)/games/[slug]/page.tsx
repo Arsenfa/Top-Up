@@ -1,9 +1,10 @@
 export const dynamic = "force-dynamic";
 
 import React from "react";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { CheckoutForm } from "@/features/checkout/components/checkout-form";
-import { ShieldAlert, HelpCircle } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface GamePageProps {
@@ -35,7 +36,7 @@ export default async function GameDetailPage({ params }: GamePageProps) {
         <div className="lg:col-span-1 flex flex-col gap-6 lg:sticky lg:top-24">
           <div className="rounded-2xl p-6 border border-border-color bg-bg-secondary flex flex-col items-center text-center">
             <div className="relative w-32 h-32 rounded-2xl overflow-hidden bg-bg-tertiary border border-border-color mb-5">
-              <img src={game.imageUrl} alt={game.name} className="w-full h-full object-cover" />
+              <Image src={game.imageUrl} alt={game.name} fill sizes="128px" className="object-cover" />
             </div>
 
             <span className="text-xs text-text-muted">{game.publisher}</span>
@@ -48,18 +49,6 @@ export default async function GameDetailPage({ params }: GamePageProps) {
                 Deskripsi Game
               </h4>
               <p className="text-xs text-text-muted leading-relaxed">{game.description}</p>
-            </div>
-          </div>
-
-          <div className="rounded-2xl p-5 border border-border-color bg-bg-secondary flex gap-4">
-            <div className="p-2 bg-success/10 text-success rounded-xl h-fit shrink-0">
-              <ShieldAlert className="w-5 h-5 text-accent" />
-            </div>
-            <div>
-              <h4 className="font-bold text-xs text-text-primary mb-1">Jaminan Transaksi Aman</h4>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Pembayaran diproteksi enkripsi SSL Midtrans. Pengiriman top up diproses otomatis.
-              </p>
             </div>
           </div>
         </div>

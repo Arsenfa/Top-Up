@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Zap, Mail, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 
 const POPULAR_GAMES = [
   { name: "Mobile Legends", href: "/games/mobile-legends" },
@@ -13,19 +13,20 @@ const POPULAR_GAMES = [
 
 const LINKS_LAYANAN = [
   { name: "Cek Transaksi", href: "/cek-order" },
-  { name: "Promo & Diskon", href: "#" },
-  { name: "Cara Top Up", href: "#" },
-  { name: "Hubungi CS", href: "#" },
+  { name: "Daftar Game", href: "/#games" },
+  { name: "Hubungi CS", href: "https://wa.me/6281234567890" },
 ];
 
-const LINKS_LEGAL = [
-  { name: "Syarat & Ketentuan", href: "#" },
-  { name: "Kebijakan Privasi", href: "#" },
-  { name: "Kebijakan Refund", href: "#" },
+const TRUST_FACTS = [
+  "Pembayaran via Midtrans",
+  "Tanpa password akun game",
+  "Bantuan lewat WhatsApp",
 ];
+
+const CURRENT_YEAR = new Date().getFullYear();
 
 export function Footer() {
-  const year = new Date().getFullYear();
+  const year = CURRENT_YEAR;
 
   return (
     <footer className="w-full bg-bg-secondary border-t border-border-color mt-auto">
@@ -33,10 +34,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
-            <Link href="/" className="flex items-center gap-2.5 w-fit">
-              <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-                <Zap className="w-4 h-4 text-bg-primary" />
-              </div>
+            <Link href="/" className="flex items-center w-fit">
               <span className="font-display font-extrabold text-lg tracking-tight text-text-primary">
                 TopUp<span className="text-accent">Ku</span>
               </span>
@@ -87,29 +85,35 @@ export function Footer() {
             <ul className="flex flex-col gap-2">
               {LINKS_LAYANAN.map((l) => (
                 <li key={l.name}>
-                  <Link
-                    href={l.href}
-                    className="text-sm text-text-muted hover:text-accent transition-colors"
-                  >
-                    {l.name}
-                  </Link>
+                  {l.href.startsWith("http") ? (
+                    <a
+                      href={l.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-text-muted hover:text-accent transition-colors"
+                    >
+                      {l.name}
+                    </a>
+                  ) : (
+                    <Link
+                      href={l.href}
+                      className="text-sm text-text-muted hover:text-accent transition-colors"
+                    >
+                      {l.name}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Trust */}
           <div className="flex flex-col gap-3">
-            <h4 className="text-sm font-semibold text-text-primary">Legal</h4>
+            <h4 className="text-sm font-semibold text-text-primary">Trust</h4>
             <ul className="flex flex-col gap-2">
-              {LINKS_LEGAL.map((l) => (
-                <li key={l.name}>
-                  <Link
-                    href={l.href}
-                    className="text-sm text-text-muted hover:text-accent transition-colors"
-                  >
-                    {l.name}
-                  </Link>
+              {TRUST_FACTS.map((fact) => (
+                <li key={fact} className="text-sm text-text-muted">
+                  {fact}
                 </li>
               ))}
             </ul>
@@ -119,14 +123,10 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-border-color">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-center">
           <p className="text-xs text-text-muted">
             &copy; {year} TopUpKu. Hak Cipta Dilindungi.
           </p>
-          <div className="flex items-center gap-1.5 text-xs text-text-muted">
-            <span className="w-1.5 h-1.5 rounded-full bg-success" />
-            Semua sistem berjalan normal
-          </div>
         </div>
       </div>
     </footer>

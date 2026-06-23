@@ -49,7 +49,7 @@ export function ProductListManager({ initialProducts, games }: ProductListManage
     gameId: games[0]?.id || "",
     name: "",
     price: 0,
-    originalPrice: "" as any,
+    originalPrice: "" as number | "",
     description: "",
     isActive: true,
     isPromo: false,
@@ -347,7 +347,7 @@ export function ProductListManager({ initialProducts, games }: ProductListManage
               label="Harga Coret / Original (IDR, Opsional)"
               placeholder="Contoh: 25000"
               value={formData.originalPrice || ""}
-              onChange={(e) => setFormData((p) => ({ ...p, originalPrice: e.target.value }))}
+              onChange={(e) => setFormData((p) => ({ ...p, originalPrice: e.target.value === "" ? "" : Number(e.target.value) }))}
             />
           </div>
 

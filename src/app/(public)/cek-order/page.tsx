@@ -2,7 +2,7 @@ import React from "react";
 import { CheckOrderForm } from "@/features/orders/components/check-order-form";
 
 export const metadata = {
-  title: "Lacak Transaksi — TopUpKu",
+  title: "Lacak Transaksi - TopUpKu",
   description: "Cari dan pantau status transaksi top up game Anda dengan mudah menggunakan nomor invoice.",
 };
 

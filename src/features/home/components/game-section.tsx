@@ -32,7 +32,7 @@ export function GameSection({ games }: GameSectionProps) {
   const filtered = selected === "ALL" ? games : games.filter((g) => g.category === selected);
 
   return (
-    <section id="games" className="w-full py-12 sm:py-20 bg-bg-primary">
+    <section id="games" className="w-full pt-16 sm:pt-24 pb-12 sm:pb-20 bg-bg-primary">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-4 border-b border-border-color">
@@ -45,7 +45,7 @@ export function GameSection({ games }: GameSectionProps) {
             </p>
           </div>
 
-          <div className="flex items-center gap-1 p-1 bg-bg-tertiary border border-border-subtle rounded-xl flex-shrink-0 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1 p-1 bg-bg-secondary border border-border-color rounded-xl flex-shrink-0 overflow-x-auto no-scrollbar">
             {categories.map((cat) => {
               const Icon = cat.icon;
               const isSelected = selected === cat.id;
@@ -57,7 +57,7 @@ export function GameSection({ games }: GameSectionProps) {
                   className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
                     isSelected
                       ? "text-bg-primary"
-                      : "text-text-secondary hover:text-text-primary"
+                      : "text-text-secondary bg-bg-elevated hover:text-text-primary hover:bg-bg-elevated/80"
                   }`}
                 >
                   {isSelected && (
@@ -81,7 +81,7 @@ export function GameSection({ games }: GameSectionProps) {
               layout
               className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
             >
-              {filtered.map((game) => (
+              {filtered.map((game, i) => (
                 <motion.div
                   layout
                   key={game.id}
@@ -89,8 +89,12 @@ export function GameSection({ games }: GameSectionProps) {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
+                  className={
+                    // ponytail: first 2 popular games span wider on lg for hierarchy
+                    selected === "ALL" && i < 2 ? "lg:col-span-2" : ""
+                  }
                 >
-                  <GameCard game={game} startPrice={game.minPrice} />
+                  <GameCard game={game} startPrice={game.minPrice} featured={selected === "ALL" && i < 2} />
                 </motion.div>
               ))}
             </motion.div>

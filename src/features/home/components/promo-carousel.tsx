@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, ArrowRight, Tag } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 interface BannerItem {
   id: string;
@@ -77,11 +78,6 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="space-y-4"
             >
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-dim text-accent text-[10px] font-semibold">
-                <Tag className="w-3 h-3" />
-                Promo Spesial
-              </div>
-
               <h3 className="font-display font-extrabold text-xl sm:text-2xl lg:text-3xl text-text-primary leading-[1.15] tracking-tight line-clamp-2">
                 {currentBanner.title}
               </h3>
@@ -120,10 +116,12 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="absolute inset-0"
             >
-              <img
+              <Image
                 src={currentBanner.imageUrl}
                 alt={currentBanner.title}
-                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-bg-secondary via-transparent to-transparent opacity-60 md:opacity-100 pointer-events-none" />
             </motion.div>

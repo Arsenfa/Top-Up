@@ -1,6 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# ============================================================
+# DEPENDENCIES
+# ============================================================
 /node_modules
 /.pnp
 .pnp.*
@@ -10,37 +10,113 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-# next.js
+# ============================================================
+# BUILD OUTPUT
+# ============================================================
 /.next/
 /out/
-
-# production
 /build
+/dist
 
-# misc
-.DS_Store
+# ============================================================
+# ENVIRONMENT & SECRETS — never commit these
+# ============================================================
+.env
+.env.*
+!.env.example
 *.pem
+*.key
+*.cert
+*.p12
+*.pfx
 
-# debug
+# ============================================================
+# DATABASE
+# ============================================================
+*.db
+*.sqlite
+*.sqlite3
+headroom_memory.db
+/prisma/dev.db
+/prisma/dev.db-journal
+
+# ============================================================
+# AI TOOLS — config, cache, memory, session files
+# ============================================================
+.claude/
+.cursor/
+.aider*
+.continue/
+.codeium/
+.github/copilot*
+.superpowers/
+.mimocode/
+.windsurf/
+*.ai-session
+*.llm-cache
+
+# ============================================================
+# BACKUP & TEMP
+# ============================================================
+.backup_*/
+backup_*/
+*.backup
+*.bak
+*.tmp
+*.temp
+*.orig
+*.swp
+*~
+
+# ============================================================
+# LOGS
+# ============================================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
-# env files (can opt-in for committing if needed)
-.env*
+# ============================================================
+# OS FILES
+# ============================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
 
-# local agent config can contain tokens and machine-specific settings
-.mimocode/mimocode.json
+# ============================================================
+# EDITOR
+# ============================================================
+.vscode/settings.json
+.vscode/launch.json
+.vscode/*.code-workspace
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
-# vercel
-.vercel
-
-# typescript
+# ============================================================
+# NEXT.JS / TYPESCRIPT
+# ============================================================
 *.tsbuildinfo
 next-env.d.ts
-
 /src/generated/prisma
+
+# ============================================================
+# VERCEL
+# ============================================================
+.vercel
+
+# ============================================================
+# COVERAGE & TESTING
+# ============================================================
+/coverage
+/.nyc_output
+/test-results
+/playwright-report
+/playwright/.cache

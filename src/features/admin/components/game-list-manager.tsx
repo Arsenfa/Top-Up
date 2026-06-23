@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ interface GameListManagerProps {
 }
 
 export function GameListManager({ initialGames }: GameListManagerProps) {
-  const { success, error, warning } = useToast();
+  const { success, error } = useToast();
   const [games, setGames] = useState<GameItem[]>(initialGames);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
@@ -229,8 +230,8 @@ export function GameListManager({ initialGames }: GameListManagerProps) {
               <TableRow key={game.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-bg-tertiary border border-border-color/40 flex-shrink-0">
-                      <img src={game.imageUrl} alt={game.name} className="w-full h-full object-cover" />
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-bg-tertiary border border-border-color/40 flex-shrink-0 relative">
+                      <Image src={game.imageUrl} alt={game.name} fill sizes="40px" className="object-cover" />
                     </div>
                     <div className="flex flex-col">
                       <span className="font-bold text-text-primary">{game.name}</span>

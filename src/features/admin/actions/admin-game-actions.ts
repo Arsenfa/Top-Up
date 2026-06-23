@@ -1,12 +1,12 @@
 "use server";
 
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function toggleGameStatus(gameId: string, field: "isActive" | "isPopular" | "isFeatured", value: boolean) {
   try {
-    const updateData: any = {};
-    updateData[field] = value;
+    const updateData: Prisma.GameUpdateInput = { [field]: value };
 
     await prisma.game.update({
       where: { id: gameId },

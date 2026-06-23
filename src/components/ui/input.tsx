@@ -27,12 +27,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={id}
             ref={ref}
             type={type}
-            className={`w-full px-4 py-3 bg-bg-secondary border rounded-xl text-sm text-text-primary transition-colors duration-200 outline-none
+            className={`w-full px-4 py-3 bg-bg-primary border rounded-xl text-sm text-text-primary transition-colors duration-200 outline-none
               ${icon ? "pl-11" : ""}
               ${rightIcon ? "pr-11" : ""}
               ${error ? "border-danger focus:border-danger" : "border-border-color focus:border-accent"}
               disabled:opacity-50 disabled:cursor-not-allowed
               placeholder:text-text-muted
+              autofill:bg-bg-primary autofill:text-text-primary
+              autofill:shadow-[inset_0_0_0_30px_#0A0B0D] autofill:text-fill-text-primary
               ${className}`}
             {...props}
           />

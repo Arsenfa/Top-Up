@@ -57,8 +57,9 @@ export async function GET(request: NextRequest) {
       } else if (["deny", "expire", "cancel", "failure"].includes(transaction_status)) {
         transactionStatus = "EXPIRED";
       }
-    } catch (err: any) {
-      console.warn("Failed to fetch status from Midtrans API:", err.message);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.warn("Failed to fetch status from Midtrans API:", errMsg);
       transactionStatus = order.status;
     }
 

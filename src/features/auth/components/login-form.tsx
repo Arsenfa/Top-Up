@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, ShieldAlert, ArrowRight, Gamepad2 } from "lucide-react";
+import { Mail, Lock, ArrowRight, Gamepad2 } from "lucide-react";
 import { Card, CardHeader, CardBody } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -77,13 +77,6 @@ export function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             icon={<Lock className="w-4 h-4" />}
           />
-          
-          <div className="flex gap-2 p-3 bg-accent/5 border border-accent/15 rounded-xl mt-1">
-            <ShieldAlert className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-            <p className="text-[10px] text-text-secondary leading-relaxed">
-              Kredensial bawaan: <span className="font-bold text-text-primary">admin@topupku.com</span> / <span className="font-bold text-text-primary">admin123</span>
-            </p>
-          </div>
 
           <Button type="submit" className="w-full mt-2" isLoading={isLoading}>
             Masuk Panel

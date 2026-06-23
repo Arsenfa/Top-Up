@@ -1,46 +1,41 @@
 import React from "react";
+import { Gamepad2, Clock, CreditCard, MessageCircle } from "lucide-react";
 
-const STATS = [
-  { value: "100K+", label: "Transaksi Sukses", desc: "Diproses otomatis 24/7" },
-  { value: "50+", label: "Game Tersedia", desc: "MOBA, FPS, RPG, dan lainnya" },
-  { value: "4.9★", label: "Rating Gamer", desc: "Dari 12.000+ ulasan" },
-  { value: "10 detik", label: "Rata-rata Proses", desc: "Instan setelah bayar" },
+const FACTS = [
+  { icon: Gamepad2, value: "8", label: "Game tersedia" },
+  { icon: Clock, value: "±10s", label: "Proses kirim" },
+  { icon: CreditCard, value: "9+", label: "Metode bayar" },
+  { icon: MessageCircle, value: "24/7", label: "CS WhatsApp" },
 ];
 
 export function StatsSection() {
   return (
-    <section className="w-full py-8 sm:py-12 bg-bg-primary">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="w-full rounded-[20px] bg-bg-secondary border border-border-color p-6 lg:p-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-4">
-            {STATS.map((stat, i) => {
-              const isLast = i === STATS.length - 1;
+    <section className="w-full py-10 sm:py-12 bg-bg-secondary border-y border-border-color">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border-subtle">
 
-              return (
-                <div
-                  key={stat.label}
-                  className={`flex flex-col px-4 text-left justify-center ${
-                    !isLast ? "lg:border-r lg:border-border-color" : ""
-                  } ${
-                    i % 2 === 0 ? "max-lg:border-r max-lg:border-border-color" : ""
-                  }`}
-                >
-                  <div className="w-5 h-0.5 bg-accent/40 rounded-full mb-3" />
-
-                  <span className="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl tracking-tight text-text-primary leading-none">
-                    {stat.value}
-                  </span>
-
-                  <span className="text-xs font-bold text-text-primary mt-2">
-                    {stat.label}
-                  </span>
-                  <span className="text-[10px] text-text-muted mt-0.5 leading-snug">
-                    {stat.desc}
-                  </span>
+          {FACTS.map((fact) => {
+            const Icon = fact.icon;
+            return (
+              <div
+                key={fact.label}
+                className="flex flex-col items-center justify-center gap-2 py-4 px-3 sm:py-5 sm:px-4 first:pl-0 last:pr-0"
+              >
+                <div className="w-9 h-9 rounded-lg bg-accent-dim flex items-center justify-center shrink-0">
+                  <Icon className="w-4 h-4 text-accent" />
                 </div>
-              );
-            })}
-          </div>
+
+                <p className="text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight leading-none">
+                  {fact.value}
+                </p>
+
+                <p className="text-xs text-text-muted leading-none">
+                  {fact.label}
+                </p>
+              </div>
+            );
+          })}
+
         </div>
       </div>
     </section>

@@ -55,15 +55,15 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col w-full">
-      {/* 1. Hero — split layout with search */}
+      {/* 1. Hero: split layout with search */}
       <HeroSection games={searchGames} />
 
       {/* 2. Stats counters */}
       <StatsSection />
 
-      {/* 3. Promo carousel — only if banners exist */}
+      {/* 3. Promo carousel: only if banners exist */}
       {banners.length > 0 && (
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-4">
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-10 lg:mt-14 mb-4">
           <PromoCarousel banners={banners} />
         </div>
       )}

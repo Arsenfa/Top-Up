@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
-import { Search, Plus, Edit, Trash2, Tag, Percent } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Percent } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { togglePromoStatus, deletePromo, upsertPromo } from "../actions/admin-promo-actions";
 import { formatCurrency } from "@/lib/utils";
@@ -43,7 +43,7 @@ export function PromoListManager({ initialPromos }: PromoListManagerProps) {
     type: "FIXED",
     value: 0,
     minPurchase: 0,
-    maxDiscount: "" as any,
+    maxDiscount: "" as number | "",
     isActive: true,
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -342,7 +342,7 @@ export function PromoListManager({ initialPromos }: PromoListManagerProps) {
               label="Maks. Diskon (IDR, Khusus Persentase)"
               placeholder="Contoh: 15000"
               value={formData.maxDiscount || ""}
-              onChange={(e) => setFormData((p) => ({ ...p, maxDiscount: e.target.value }))}
+              onChange={(e) => setFormData((p) => ({ ...p, maxDiscount: e.target.value === "" ? "" : Number(e.target.value) }))}
               disabled={formData.type === "FIXED"}
             />
           </div>

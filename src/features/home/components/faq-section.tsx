@@ -15,7 +15,7 @@ const FAQS = [
 
 function FAQItem({ faq, isOpen, onToggle }: { faq: { q: string; a: string }; isOpen: boolean; onToggle: () => void }) {
   return (
-    <div className={`rounded-xl border transition-colors ${isOpen ? "border-accent/30 bg-bg-tertiary" : "border-border-color bg-bg-secondary"}`}>
+    <div className={`rounded-xl border transition-colors ${isOpen ? "border-accent/30 bg-bg-elevated" : "border-border-color bg-bg-tertiary"}`}>
       <button
         onClick={onToggle}
         className="flex items-center justify-between w-full px-5 py-4 text-left gap-4"
@@ -39,7 +39,7 @@ export function FAQSection() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <section className="w-full py-16 sm:py-24">
+    <section className="w-full py-16 sm:py-24 bg-bg-secondary border-y border-border-subtle">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10 lg:gap-16">
           <div className="lg:sticky lg:top-28 lg:self-start">
@@ -51,11 +51,13 @@ export function FAQSection() {
             </p>
 
             <Link
-              href="/contact"
+              href="https://wa.me/6281234567890"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent-hover transition-colors group"
             >
               <MessageCircle className="w-4 h-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
-              Hubungi CS
+              Hubungi CS via WhatsApp
             </Link>
           </div>
 

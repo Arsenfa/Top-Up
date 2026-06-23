@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Search, RotateCw, ExternalLink } from "lucide-react";
@@ -140,7 +139,7 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
                 accountInfoStr = Object.entries(parsed)
                   .map(([k, v]) => `${k === "userId" ? "UID" : "Svr"}: ${v}`)
                   .join(" | ");
-              } catch (e) {}
+              } catch {}
 
               return (
                 <TableRow key={order.id}>

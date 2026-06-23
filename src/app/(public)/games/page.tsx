@@ -2,12 +2,13 @@ export const dynamic = "force-dynamic";
 
 import React from "react";
 import Link from "next/link";
+import type { Prisma } from "@prisma/client";
 import { GameCard } from "@/components/shared/game-card";
 import { Input } from "@/components/ui/input";
 import { Search, Gamepad, ArrowUpDown } from "lucide-react";
 
 export const metadata = {
-  title: "Daftar Game — TopUpKu",
+  title: "Daftar Game - TopUpKu",
   description: "Cari game favorit Anda dan lakukan top up diamond atau voucher instan dengan harga terjangkau.",
 };
 
@@ -23,16 +24,16 @@ export default async function GamesPage({ searchParams }: GamesPageProps) {
 
   const { prisma } = await import("@/lib/prisma");
 
-  const whereClause: any = { isActive: true };
+  const whereClause: Prisma.GameWhereInput = { isActive: true };
   if (q.trim() !== "") {
     whereClause.OR = [
-      { name: { contains: q, lte: undefined } },
+      { name: { contains: q } },
       { publisher: { contains: q } },
     ];
   }
   if (category !== "ALL") whereClause.category = category;
 
-  let orderByClause: any = { sortOrder: "asc" };
+  let orderByClause: Prisma.GameOrderByWithRelationInput = { sortOrder: "asc" };
   if (sort === "name_asc") orderByClause = { name: "asc" };
   else if (sort === "name_desc") orderByClause = { name: "desc" };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -181,8 +182,8 @@ export function BannerListManager({ initialBanners }: BannerListManagerProps) {
             {filteredBanners.map((b) => (
               <TableRow key={b.id}>
                 <TableCell>
-                  <div className="w-24 h-12 rounded-lg overflow-hidden bg-bg-tertiary border border-border-color/40">
-                    <img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" />
+                  <div className="w-24 h-12 rounded-lg overflow-hidden bg-bg-tertiary border border-border-color/40 relative">
+                    <Image src={b.imageUrl} alt={b.title} fill sizes="96px" className="object-cover" />
                   </div>
                 </TableCell>
                 <TableCell>

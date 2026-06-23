@@ -1,36 +1,38 @@
 @import "tailwindcss";
 
 /* =============================================
-   DESIGN TOKENS — SLATE + ELECTRIC CYAN
-   Dark base, clean surfaces, single vibrant accent.
-   No glass, no glow, no gradient-text.
+   DESIGN TOKENS - MIDNIGHT EMBER
+   Navy-tinted dark + warm orange accent.
+   Premium gaming feel without generic cyan.
    ============================================= */
 :root {
-  /* ── Surfaces ── */
-  --background:         #0A0B0D;
-  --bg-primary:         #0A0B0D;
-  --bg-secondary:       #111214;
-  --bg-tertiary:        #191A1E;
-  --bg-elevated:        #1E2024;
-  --bg-overlay:         #111214;
+  /* ── Surfaces (navy undertone, not dead-black) ──
+     Steps widened so elevation actually reads on screen:
+     each tier is a clearly distinct lightness, not a 4-point nudge. */
+  --background:         #08090D;
+  --bg-primary:         #08090D;
+  --bg-secondary:       #11131C;
+  --bg-tertiary:        #191C28;
+  --bg-elevated:        #232634;
+  --bg-overlay:         #11131C;
 
   /* ── Borders ── */
-  --border-color:       #232529;
-  --border-subtle:      #1A1C20;
-  --border-strong:      #2E3138;
+  --border-color:       #2A2D3A;
+  --border-subtle:      #1B1E29;
+  --border-strong:      #3A3E4E;
 
   /* ── Text ── */
-  --text-primary:       #F0F1F3;
-  --text-secondary:     #9DA1AB;
-  --text-muted:         #5C6069;
-  --foreground:         #F0F1F3;
+  --text-primary:       #F2F2F5;
+  --text-secondary:     #8B8FA0;
+  --text-muted:         #55586A;
+  --foreground:         #F2F2F5;
 
-  /* ── Accent: Electric Cyan ── */
-  --accent:             #00D4FF;
-  --accent-hover:       #00B8E0;
-  --accent-light:       rgba(0, 212, 255, 0.15);
-  --accent-dim:         rgba(0, 212, 255, 0.08);
-  --accent-glow:        rgba(0, 212, 255, 0.20);
+  /* ── Accent: Ember Orange ── */
+  --accent:             #FF6B35;
+  --accent-hover:       #E55A28;
+  --accent-light:       rgba(255, 107, 53, 0.15);
+  --accent-dim:         rgba(255, 107, 53, 0.08);
+  --accent-glow:        rgba(255, 107, 53, 0.20);
 
   /* ── Semantic ── */
   --success:            #3DDC84;
@@ -111,6 +113,17 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Subtle noise grain adds tactile depth to flat dark surfaces */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.15;
@@ -138,13 +151,31 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 6px;
 }
 
+/* =============================================
+   AUTO-FILL - kill the blue on dark theme
+   ============================================= */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-primary) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 ::selection {
-  background: rgba(0, 212, 255, 0.25);
+  background: rgba(255, 107, 53, 0.25);
   color: var(--text-primary);
 }
 
 /* =============================================
-   ANIMATIONS — minimal, only what's functional
+   ANIMATIONS - minimal, only what's functional
    ============================================= */
 
 /* =============================================
@@ -157,13 +188,23 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-hover {
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 .card-hover:hover {
-  border-color: var(--accent);
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
 }
 
-/* Category chips — all identical, no forced colors */
+/* Section rhythm: alternating bands so consecutive sections read as distinct.
+   Apply .section-alt to every other section wrapper. */
+.section-alt {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Category chips: all identical, no forced colors */
 .chip-moba,
 .chip-fps,
 .chip-rpg,
@@ -174,7 +215,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--border-color);
 }
 
-/* Legacy fallbacks — flat surfaces, no glass/glow */
+/* Legacy fallbacks: flat surfaces, no glass/glow */
 .glass,
 .glass-sm,
 .glass-strong {

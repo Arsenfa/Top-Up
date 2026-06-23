@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { midtransSnap } from "@/lib/midtrans";
+import { getMidtransSnap } from "@/lib/midtrans";
 import { generateInvoiceNumber } from "@/lib/utils";
 
 interface CheckoutInput {
@@ -126,13 +126,32 @@ export async function createCheckoutOrder(input: CheckoutInput) {
     let snapToken = "";
     let redirectUrl = "";
 
-    try {
-      const transaction = await midtransSnap.createTransaction(parameter);
-      snapToken = transaction.token;
-      redirectUrl = transaction.redirect_url;
-    } catch (err: any) {
-      console.error("Error creating Midtrans transaction:", err.message || err);
-      return { success: false, error: "Gagal menghubungkan ke gateway pembayaran. Silakan coba beberapa saat lagi." };
+    const isDummyKey =
+      process.env.NODE_ENV === "development" &&
+      (!process.env.MIDTRANS_SERVER_KEY ||
+        process.env.MIDTRANS_SERVER_KEY === "SB-Mid-server-sandbox-key");
+
+    if (isDummyKey) {
+      // ponytail: fallback to mock token when keys are dummy sandbox keys
+      snapToken = `mock-token-${Date.now()}`;
+      redirectUrl = "";
+    } else {
+      try {
+        const transaction = await getMidtransSnap().createTransaction(parameter);
+        snapToken = transaction.token;
+        redirectUrl = transaction.redirect_url;
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error("Error creating Midtrans transaction:", msg);
+
+        // ponytail: fallback to mock in development if API fails
+        if (process.env.NODE_ENV === "development") {
+          snapToken = `mock-token-${Date.now()}`;
+          redirectUrl = "";
+        } else {
+          return { success: false, error: "Gagal menghubungkan ke gateway pembayaran. Silakan coba beberapa saat lagi." };
+        }
+      }
     }
 
     // 7. Create Order + increment promo usage in an atomic transaction
@@ -174,7 +193,7 @@ export async function createCheckoutOrder(input: CheckoutInput) {
       invoiceNumber,
       orderId: order.id,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Checkout action failed:", error);
     return { success: false, error: "Gagal membuat transaksi. Silakan coba beberapa saat lagi." };
   }

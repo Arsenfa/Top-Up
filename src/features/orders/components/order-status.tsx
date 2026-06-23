@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Script from "next/script";
 import Link from "next/link";
 import { CheckCircle2, AlertCircle, Clock, XCircle, Copy, ArrowLeft, Mail, Smartphone } from "lucide-react";
@@ -9,7 +10,7 @@ import { Card, CardHeader, CardBody } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency } from "@/lib/utils";
-import { updateOrderStatus } from "@/features/admin/actions/admin-order-actions";
+import { updateOrderStatus, simulatePayment } from "@/features/admin/actions/admin-order-actions";
 
 interface OrderStatusProps {
   order: {
@@ -28,9 +29,10 @@ interface OrderStatusProps {
     game: { name: string; imageUrl: string };
     product: { name: string };
   };
+  isAdmin?: boolean; // Add admin flag
 }
 
-export function OrderStatus({ order }: OrderStatusProps) {
+export function OrderStatus({ order, isAdmin = false }: OrderStatusProps) {
   const { success, error, warning } = useToast();
   const [isCopying, setIsCopying] = useState(false);
   const [payLoading, setPayLoading] = useState(false);
@@ -38,9 +40,15 @@ export function OrderStatus({ order }: OrderStatusProps) {
   const [currentStatus, setCurrentStatus] = useState(order.status);
 
   const handleSimulateSuccess = async () => {
+    // Double-check: only in development and for admins
+    if (process.env.NODE_ENV !== "development") {
+      error("Payment simulation only available in development environment");
+      return;
+    }
+
     setSimLoading(true);
     try {
-      const res = await updateOrderStatus(order.id, "SUCCESS");
+      const res = await simulatePayment(order.id);
       if (res.success) {
         success("Simulasi pembayaran berhasil!");
         setCurrentStatus("SUCCESS");
@@ -56,19 +64,34 @@ export function OrderStatus({ order }: OrderStatusProps) {
 
   React.useEffect(() => {
     if (currentStatus !== "PENDING") return;
-    const interval = setInterval(async () => {
+    
+    const controller = new AbortController();
+    
+    const pollStatus = async () => {
       try {
-        const response = await fetch(`/api/payment/status?invoice=${order.invoiceNumber}`);
+        const response = await fetch(`/api/payment/status?invoice=${order.invoiceNumber}`, {
+          signal: controller.signal,
+        });
         const data = await response.json();
         if (data.success && data.status !== currentStatus) {
           setCurrentStatus(data.status);
           if (data.status === "SUCCESS") success("Pembayaran berhasil diverifikasi!");
         }
       } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          // Request was aborted, ignore
+          return;
+        }
         console.error("Failed to poll order status:", err);
       }
-    }, 5000);
-    return () => clearInterval(interval);
+    };
+
+    const interval = setInterval(pollStatus, 5000);
+    
+    return () => {
+      controller.abort();
+      clearInterval(interval);
+    };
   }, [order.invoiceNumber, currentStatus, success]);
 
   let accountInfo: Record<string, string> = {};
@@ -110,7 +133,7 @@ export function OrderStatus({ order }: OrderStatusProps) {
       label: "Menunggu Pembayaran",
       variant: "warning" as const,
       icon: (
-        <div className="w-16 h-16 rounded-full bg-warning/10 text-warning flex items-center justify-center animate-pulse">
+        <div className="w-16 h-16 rounded-full bg-warning/10 text-warning flex items-center justify-center">
           <Clock className="w-8 h-8 stroke-[2.5]" />
         </div>
       ),
@@ -120,7 +143,7 @@ export function OrderStatus({ order }: OrderStatusProps) {
       label: "Sedang Diproses",
       variant: "info" as const,
       icon: (
-        <div className="w-16 h-16 rounded-full bg-info/10 text-info flex items-center justify-center animate-pulse-slow">
+        <div className="w-16 h-16 rounded-full bg-info/10 text-info flex items-center justify-center">
           <Clock className="w-8 h-8 stroke-[2.5]" />
         </div>
       ),
@@ -196,9 +219,12 @@ export function OrderStatus({ order }: OrderStatusProps) {
                 {order.midtransSnapToken && (
                   <Button onClick={handlePayNow} isLoading={payLoading}>Selesaikan Pembayaran</Button>
                 )}
-                <Button onClick={handleSimulateSuccess} variant="outline" isLoading={simLoading}>
-                  Simulasi Bayar Sukses (Demo)
-                </Button>
+                {/* Only show simulation button in development and for admins */}
+                {process.env.NODE_ENV === "development" && isAdmin && (
+                  <Button onClick={handleSimulateSuccess} variant="outline" isLoading={simLoading}>
+                    Simulasi Bayar Sukses (Dev Only)
+                  </Button>
+                )}
               </div>
             )}
           </CardBody>
@@ -215,8 +241,8 @@ export function OrderStatus({ order }: OrderStatusProps) {
           </CardHeader>
           <CardBody className="flex flex-col gap-6 p-6 sm:p-8">
             <div className="flex items-center gap-4 border-b border-border-color pb-5">
-              <div className="w-14 h-14 rounded-xl overflow-hidden bg-bg-tertiary border border-border-color shrink-0">
-                <img src={order.game.imageUrl} alt={order.game.name} className="w-full h-full object-cover" />
+              <div className="w-14 h-14 rounded-xl overflow-hidden bg-bg-tertiary border border-border-color shrink-0 relative">
+                <Image src={order.game.imageUrl} alt={order.game.name} fill sizes="56px" className="object-cover" />
               </div>
               <div>
                 <h4 className="text-base font-extrabold text-text-primary">{order.game.name}</h4>

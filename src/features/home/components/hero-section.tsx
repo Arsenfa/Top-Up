@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ArrowRight, ShieldCheck, Zap, Users, Clock } from "lucide-react";
+import { Search, X, ArrowRight, ShieldCheck, Zap, Clock } from "lucide-react";
 
 interface GameSearchItem {
   id: string;
@@ -48,23 +49,26 @@ export function HeroSection({ games }: HeroSectionProps) {
   };
 
   return (
-    <section className="w-full relative overflow-hidden bg-bg-primary">
-      {/* Subtle geometric background accent */}
-      <div className="absolute top-0 right-0 w-[40%] h-[60%] bg-accent/[0.03] rounded-bl-[100px] -z-10 pointer-events-none" />
-
+    <section className="w-full bg-bg-primary">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 lg:pt-14 lg:pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center">
 
           {/* Left: Text content & Search */}
           <div className="space-y-6 lg:max-w-xl">
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.25rem] text-text-primary tracking-tight leading-[1.1] font-bold">
-              Top Up Game
-              <br />
-              <span className="text-accent">Instan</span> &amp; Hemat
-            </h1>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-text-primary tracking-tighter leading-[1.2] font-black">
+                Top Up Game Favorit
+                <br />
+                <span className="text-accent">Langsung Masuk</span>
+              </h1>
+            </motion.div>
 
-            <p className="text-base sm:text-lg text-text-secondary leading-relaxed max-w-lg">
-              Platform top up otomatis 24/7. Diamond, UC, VP, dan Crystals game favoritmu dengan harga terbaik.
+            <p className="text-base sm:text-lg text-text-secondary leading-relaxed max-w-md">
+              Diamond ML, UC PUBG, VP Valorant. Bayar, tunggu sebentar, selesai. Tanpa login akun, tanpa ribet.
             </p>
 
             {/* Search Widget */}
@@ -133,55 +137,38 @@ export function HeroSection({ games }: HeroSectionProps) {
               </AnimatePresence>
             </div>
 
-            {/* Trust signals — static, no mock data */}
+            {/* Trust signals: static, no mock data */}
             <div className="flex items-center gap-5 text-xs text-text-muted pt-2">
               <div className="flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5 text-accent" />
-                <span>Proses 10 detik</span>
+                <span>Proses ±10 detik</span>
               </div>
               <div className="w-px h-3 bg-border-color" />
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-success" />
-                <span>Mitra resmi game</span>
+                <span>Tanpa password akun</span>
               </div>
               <div className="w-px h-3 bg-border-color hidden sm:block" />
               <div className="items-center gap-1.5 hidden sm:flex">
-                <Users className="w-3.5 h-3.5 text-info" />
-                <span>100K+ transaksi</span>
+                <Clock className="w-3.5 h-3.5 text-info" />
+                <span>Tersedia 24/7</span>
               </div>
             </div>
           </div>
 
-          {/* Right: Hero Visual — clean, no mock widget */}
+          {/* Right: Hero Visual, clean, no badges */}
           <div className="relative w-full max-w-md mx-auto">
             <div className="relative rounded-[28px] overflow-hidden border border-border-color bg-bg-secondary p-1.5 shadow-elevated">
-              <img
-                src="/games/valorant.jpg"
-                alt="TopUpKu Gaming Banner"
-                className="w-full h-auto aspect-square object-cover rounded-[22px] bg-bg-tertiary"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none rounded-[22px] m-1.5" />
-            </div>
-
-            {/* Static Guarantee Badge */}
-            <div className="absolute -top-3 -right-3 bg-bg-secondary border border-border-color rounded-2xl p-3 shadow-elevated flex items-center gap-2.5 z-20">
-              <div className="w-7 h-7 rounded-lg bg-success/10 text-success flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <div className="text-left">
-                <p className="text-[10px] font-bold text-text-primary leading-none">Garansi Legal</p>
-                <p className="text-[9px] text-text-muted mt-0.5 leading-none">Mitra Resmi Game</p>
-              </div>
-            </div>
-
-            {/* Static Stats Badge — replaces fake live ticker */}
-            <div className="absolute -bottom-5 -left-3 sm:-left-5 bg-bg-secondary border border-border-color rounded-2xl p-4 shadow-elevated z-20 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0">
-                <Clock className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-text-primary leading-none">Rata-rata 10 detik</p>
-                <p className="text-[9px] text-text-muted mt-0.5 leading-none">Proses otomatis 24/7</p>
+              <div className="relative aspect-square rounded-[22px] overflow-hidden bg-bg-tertiary">
+                <Image
+                  src="/games/valorant.jpg"
+                  alt="TopUpKu Gaming Banner"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 90vw, 450px"
+                  className="object-cover rounded-[22px]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none rounded-[22px]" />
               </div>
             </div>
           </div>

@@ -17,12 +17,21 @@ export const metadata: Metadata = {
     siteName: "TopUpKu",
     locale: "id_ID",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "TopUpKu - Platform Top Up Game Terpercaya",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "TopUpKu - Top Up Game Tercepat & Termurah",
     description:
       "Top up diamond Mobile Legends (ML), Free Fire (FF), Genshin Impact, UC PUBG Mobile, VP Valorant instan 24 jam.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
@@ -37,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
-      <body className="min-h-full flex flex-col bg-bg-primary text-text-primary">
+      <body className="min-h-full flex flex-col bg-bg-primary text-text-primary" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>
