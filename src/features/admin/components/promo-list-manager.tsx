@@ -118,8 +118,7 @@ export function PromoListManager({ initialPromos }: PromoListManagerProps) {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Simple validation
+    if (formLoading) return;
     const errors: Record<string, string> = {};
     if (!formData.code.trim()) errors.code = "Kode promo wajib diisi.";
     if (!formData.title.trim()) errors.title = "Judul promo wajib diisi.";

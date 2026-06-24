@@ -17,7 +17,7 @@ export default async function AdminPromosPage() {
         </p>
       </div>
 
-      <PromoListManager initialPromos={promos} />
+      <PromoListManager key={promos.length} initialPromos={promos} />
     </div>
   );
 }

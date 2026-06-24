@@ -1,6 +1,6 @@
 "use server";
 
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getSession, requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
@@ -42,6 +42,9 @@ export async function deleteProduct(productId: string) {
     return { success: true };
   } catch (error) {
     console.error("Failed to delete product:", error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
+      return { success: false, error: "Tidak bisa menghapus produk karena masih ada transaksi/pesanan terkait." };
+    }
     return { success: false, error: "Gagal menghapus produk dari database." };
   }
 }

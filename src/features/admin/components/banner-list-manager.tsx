@@ -109,8 +109,7 @@ export function BannerListManager({ initialBanners }: BannerListManagerProps) {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Simple validation
+    if (formLoading) return;
     const errors: Record<string, string> = {};
     if (!formData.title.trim()) errors.title = "Judul banner wajib diisi.";
     if (!formData.imageUrl.trim()) errors.imageUrl = "Link gambar banner wajib diisi.";
@@ -299,7 +298,7 @@ export function BannerListManager({ initialBanners }: BannerListManagerProps) {
               type="number"
               label="Urutan Tampil (Sort Order)"
               placeholder="Contoh: 0"
-              value={formData.sortOrder || ""}
+              value={formData.sortOrder ?? ""}
               onChange={(e) => setFormData((p) => ({ ...p, sortOrder: Number(e.target.value) }))}
               icon={<SortAsc className="w-4 h-4" />}
             />

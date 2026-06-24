@@ -1,6 +1,6 @@
 "use server";
 
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getSession, requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
@@ -42,6 +42,9 @@ export async function deleteGame(gameId: string) {
     return { success: true };
   } catch (error) {
     console.error("Failed to delete game:", error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
+      return { success: false, error: "Tidak bisa menghapus game karena masih ada transaksi/pesanan terkait." };
+    }
     return { success: false, error: "Gagal menghapus game dari database." };
   }
 }
@@ -72,7 +75,11 @@ export async function upsertGame(input: UpsertGameInput) {
     }
 
     if (id) {
-      // Update
+      // Update — check slug uniqueness excluding self
+      const existing = await prisma.game.findFirst({ where: { slug: data.slug, NOT: { id } } });
+      if (existing) {
+        return { success: false, error: "Slug game sudah terdaftar. Gunakan slug lain." };
+      }
       await prisma.game.update({
         where: { id },
         data,

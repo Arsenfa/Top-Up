@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardBody, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ interface SettingsFormProps {
 
 export function SettingsForm({ configs }: SettingsFormProps) {
   const { success, error } = useToast();
+  const router = useRouter();
   const [siteName, setSiteName] = useState(configs.site_name);
   const [siteDesc, setSiteDesc] = useState(configs.site_description);
   const [whatsapp, setWhatsapp] = useState(configs.contact_whatsapp);
@@ -27,6 +29,7 @@ export function SettingsForm({ configs }: SettingsFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
 
     if (!siteName.trim() || !siteDesc.trim() || !whatsapp.trim() || !email.trim()) {
       error("Semua kolom pengaturan wajib diisi.");
@@ -46,6 +49,7 @@ export function SettingsForm({ configs }: SettingsFormProps) {
 
     if (result.success) {
       success("Pengaturan situs berhasil disimpan!");
+      router.refresh();
     } else {
       error(result.error || "Gagal menyimpan pengaturan.");
     }

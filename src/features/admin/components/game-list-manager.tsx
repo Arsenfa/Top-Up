@@ -141,8 +141,7 @@ export function GameListManager({ initialGames }: GameListManagerProps) {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Simple validation
+    if (formLoading) return;
     const errors: Record<string, string> = {};
     if (!formData.name.trim()) errors.name = "Nama game wajib diisi.";
     if (!formData.slug.trim()) errors.slug = "Slug URL wajib diisi.";

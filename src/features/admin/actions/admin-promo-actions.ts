@@ -57,6 +57,10 @@ export async function upsertPromo(input: UpsertPromoInput) {
     }
 
     if (id) {
+      const existing = await prisma.promo.findFirst({ where: { code: data.code, NOT: { id } } });
+      if (existing) {
+        return { success: false, error: "Kode promo ini sudah terdaftar." };
+      }
       await prisma.promo.update({ where: { id }, data });
     } else {
       const existing = await prisma.promo.findUnique({ where: { code: data.code } });

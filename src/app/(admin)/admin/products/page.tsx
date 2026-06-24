@@ -25,7 +25,7 @@ export default async function AdminProductsPage() {
         </p>
       </div>
 
-      <ProductListManager initialProducts={products} games={games} />
+      <ProductListManager key={products.length} initialProducts={products} games={games} />
     </div>
   );
 }

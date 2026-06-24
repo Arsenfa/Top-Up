@@ -17,7 +17,7 @@ export default async function AdminBannersPage() {
         </p>
       </div>
 
-      <BannerListManager initialBanners={banners} />
+      <BannerListManager key={banners.length} initialBanners={banners} />
     </div>
   );
 }

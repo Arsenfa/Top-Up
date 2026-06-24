@@ -17,7 +17,7 @@ export default async function AdminGamesPage() {
         </p>
       </div>
 
-      <GameListManager initialGames={games} />
+      <GameListManager key={games.length} initialGames={games} />
     </div>
   );
 }

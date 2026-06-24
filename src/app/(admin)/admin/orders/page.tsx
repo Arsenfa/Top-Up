@@ -21,7 +21,7 @@ export default async function AdminOrdersPage() {
         </p>
       </div>
 
-      <OrderListManager initialOrders={orders} />
+      <OrderListManager key={orders.length} initialOrders={orders} />
     </div>
   );
 }

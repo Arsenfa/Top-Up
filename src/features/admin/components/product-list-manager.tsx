@@ -124,8 +124,7 @@ export function ProductListManager({ initialProducts, games }: ProductListManage
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Simple validation
+    if (formLoading) return;
     const errors: Record<string, string> = {};
     if (!formData.gameId) errors.gameId = "Wajib memilih game.";
     if (!formData.name.trim()) errors.name = "Nama nominal wajib diisi.";
