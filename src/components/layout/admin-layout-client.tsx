@@ -97,11 +97,11 @@ export function AdminLayoutClient({ children }: AdminLayoutClientProps) {
                 href={item.href}
                 prefetch
                 onClick={() => setIsSidebarOpen(false)}
-                className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer border
+                className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer
                   ${
                     isActive(item.href)
-                      ? "bg-accent/10 border-accent/25 text-accent shadow-lg shadow-accent/5"
-                      : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary/40 border-transparent"
+                      ? "bg-accent/8 text-accent shadow-[inset_3px_0_0_0_var(--accent)]"
+                      : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary/40"
                   }`}
               >
                 {item.icon}
