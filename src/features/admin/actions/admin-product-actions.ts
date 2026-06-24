@@ -2,9 +2,12 @@
 
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { getSession, requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export async function toggleProductStatus(productId: string, field: "isActive" | "isPromo", value: boolean) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     const updateData: Prisma.ProductUpdateInput = { [field]: value };
 
@@ -25,6 +28,8 @@ export async function toggleProductStatus(productId: string, field: "isActive" |
 }
 
 export async function deleteProduct(productId: string) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     await prisma.product.delete({
       where: { id: productId },
@@ -53,6 +58,8 @@ interface UpsertProductInput {
 }
 
 export async function upsertProduct(input: UpsertProductInput) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     const { id, ...data } = input;
 

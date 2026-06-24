@@ -91,6 +91,8 @@ export function HeroSection({ games }: HeroSectionProps) {
                 />
                 {searchQuery && (
                   <button
+                    type="button"
+                    aria-label="Hapus pencarian"
                     onClick={() => setSearchQuery("")}
                     className="text-text-muted hover:text-text-primary transition-colors cursor-pointer"
                   >

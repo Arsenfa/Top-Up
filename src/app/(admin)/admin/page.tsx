@@ -10,24 +10,22 @@ import { formatCurrency } from "@/lib/utils";
 export default async function AdminDashboardPage() {
   const { prisma } = await import("@/lib/prisma");
 
-  const totalOrders = await prisma.order.count();
-  const pendingOrders = await prisma.order.count({ where: { status: "PENDING" } });
-  const activeGames = await prisma.game.count({ where: { isActive: true } });
+  const [totalOrders, pendingOrders, activeGames, revenueAgg, recentOrders] = await Promise.all([
+    prisma.order.count(),
+    prisma.order.count({ where: { status: "PENDING" } }),
+    prisma.game.count({ where: { isActive: true } }),
+    prisma.order.aggregate({ where: { status: "SUCCESS" }, _sum: { amount: true } }),
+    prisma.order.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: {
+        game: { select: { name: true } },
+        product: { select: { name: true } },
+      },
+    }),
+  ]);
 
-  const successfulOrders = await prisma.order.findMany({
-    where: { status: "SUCCESS" },
-    select: { amount: true },
-  });
-  const totalRevenue = successfulOrders.reduce((sum, order) => sum + order.amount, 0);
-
-  const recentOrders = await prisma.order.findMany({
-    take: 5,
-    orderBy: { createdAt: "desc" },
-    include: {
-      game: { select: { name: true } },
-      product: { select: { name: true } },
-    },
-  });
+  const totalRevenue = revenueAgg._sum.amount ?? 0;
 
   const stats = [
     {

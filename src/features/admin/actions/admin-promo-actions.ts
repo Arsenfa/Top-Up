@@ -1,9 +1,12 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getSession, requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export async function togglePromoStatus(promoId: string, value: boolean) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     await prisma.promo.update({
       where: { id: promoId },
@@ -18,6 +21,8 @@ export async function togglePromoStatus(promoId: string, value: boolean) {
 }
 
 export async function deletePromo(promoId: string) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     await prisma.promo.delete({ where: { id: promoId } });
     revalidatePath("/admin/promos");
@@ -41,6 +46,8 @@ interface UpsertPromoInput {
 }
 
 export async function upsertPromo(input: UpsertPromoInput) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     const { id, ...data } = input;
     data.code = data.code.toUpperCase();

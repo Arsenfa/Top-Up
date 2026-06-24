@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { mapMidtransStatus } from "@/lib/midtrans-status";
 
 export async function GET(request: NextRequest) {
   try {
@@ -47,15 +48,10 @@ export async function GET(request: NextRequest) {
       paymentType = payment_type || order.paymentMethod;
       transactionId = transaction_id || order.midtransTransactionId;
 
-      if (transaction_status === "settlement" ||
-         (transaction_status === "capture" && fraud_status === "accept")) {
-        transactionStatus = "SUCCESS";
+      transactionStatus = mapMidtransStatus(transaction_status, fraud_status);
+      if (transactionStatus === "SUCCESS") {
         paidAt = settlement_time ? new Date(settlement_time) : new Date();
         completedAt = new Date();
-      } else if (transaction_status === "pending") {
-        transactionStatus = "PENDING";
-      } else if (["deny", "expire", "cancel", "failure"].includes(transaction_status)) {
-        transactionStatus = "EXPIRED";
       }
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);

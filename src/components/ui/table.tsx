@@ -42,9 +42,9 @@ export function TableCell({ children, className = "", ...props }: React.TdHTMLAt
   );
 }
 
-export function TableHead({ children, className = "", ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
+export function TableHead({ children, className = "", scope = "col", ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <th className={`p-4 align-middle font-semibold text-text-secondary ${className}`} {...props}>
+    <th scope={scope} className={`p-4 align-middle font-semibold text-text-secondary ${className}`} {...props}>
       {children}
     </th>
   );

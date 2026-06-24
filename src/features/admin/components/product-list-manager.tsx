@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ interface ProductListManagerProps {
 
 export function ProductListManager({ initialProducts, games }: ProductListManagerProps) {
   const { success, error } = useToast();
+  const router = useRouter();
   const [products, setProducts] = useState<ProductItem[]>(initialProducts);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGameId, setSelectedGameId] = useState("ALL");
@@ -154,7 +156,7 @@ export function ProductListManager({ initialProducts, games }: ProductListManage
     if (result.success) {
       success(editingProduct ? "Produk berhasil diperbarui!" : "Produk baru berhasil ditambahkan!");
       setIsModalOpen(false);
-      window.location.reload(); // Quick refresh page data
+      router.refresh();
     } else {
       error(result.error || "Gagal menyimpan data produk.");
     }

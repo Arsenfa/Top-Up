@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { randomBytes } from "crypto";
 
 /**
  * Merges Tailwind CSS classes cleanly, resolving conflicts.
@@ -28,8 +27,11 @@ export function formatCurrency(amount: number): string {
  * Format: TUK-YYYYMMDD-XXXXXXXX (8 hex chars = 16^8 = 4.3 billion possibilities)
  */
 export function generateInvoiceNumber(): string {
+  // Dynamic import to avoid breaking client-side bundles
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const crypto = require("crypto") as typeof import("crypto");
   const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  const randStr = randomBytes(4).toString("hex").toUpperCase();
+  const randStr = crypto.randomBytes(4).toString("hex").toUpperCase();
   return `TUK-${dateStr}-${randStr}`;
 }
 
@@ -37,14 +39,10 @@ export function generateInvoiceNumber(): string {
  * Debounces a function call.
  */
 export function debounce<T extends (...args: unknown[]) => void>(func: T, wait: number) {
-  let timeout: NodeJS.Timeout;
+  let timeout: ReturnType<typeof setTimeout>;
   return function executedFunction(...args: Parameters<T>) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
     clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+    timeout = setTimeout(() => func(...args), wait);
   };
 }
 
@@ -91,8 +89,7 @@ export function sanitizeInput(input: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;")
-    .replace(/\//g, "&#x2F;");
+    .replace(/'/g, "&#x27;");
 }
 
 /**

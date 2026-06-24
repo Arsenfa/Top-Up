@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ interface PromoListManagerProps {
 
 export function PromoListManager({ initialPromos }: PromoListManagerProps) {
   const { success, error } = useToast();
+  const router = useRouter();
   const [promos, setPromos] = useState<PromoItem[]>(initialPromos);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -151,7 +153,7 @@ export function PromoListManager({ initialPromos }: PromoListManagerProps) {
     if (result.success) {
       success(editingPromo ? "Promo berhasil diperbarui!" : "Promo baru berhasil ditambahkan!");
       setIsModalOpen(false);
-      window.location.reload();
+      router.refresh();
     } else {
       error(result.error || "Gagal menyimpan data promo.");
     }
@@ -159,21 +161,23 @@ export function PromoListManager({ initialPromos }: PromoListManagerProps) {
 
   const filteredPromos = promos.filter((p) =>
     p.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    (p.title ?? "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Action Toolbar */}
       <div className="p-5 rounded-2xl border border-border-color/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <Input
-          id="promo-search"
-          placeholder="Cari kode atau judul promo..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          icon={<Search className="w-4 h-4 text-text-secondary/60" />}
-          className="w-full sm:w-64"
-        />
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+          <Input
+            id="promo-search"
+            placeholder="Cari kode atau judul promo..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            icon={<Search className="w-4 h-4 text-text-secondary/60" />}
+            className="w-full sm:w-64"
+          />
+        </div>
 
         <Button onClick={handleOpenAddModal} className="w-full sm:w-auto flex items-center gap-2">
           <Plus className="w-4 h-4" />

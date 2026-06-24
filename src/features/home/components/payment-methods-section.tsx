@@ -52,6 +52,8 @@ export function PaymentMethodsSection() {
                   <img
                     src={m.logo}
                     alt={m.name}
+                    width={60}
+                    height={20}
                     loading="lazy"
                     className="h-5 w-auto max-w-[60px] object-contain opacity-60 group-hover:opacity-100 transition-opacity duration-300"
                   />

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ interface BannerListManagerProps {
 
 export function BannerListManager({ initialBanners }: BannerListManagerProps) {
   const { success, error } = useToast();
+  const router = useRouter();
   const [banners, setBanners] = useState<BannerItem[]>(initialBanners);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -136,7 +138,7 @@ export function BannerListManager({ initialBanners }: BannerListManagerProps) {
     if (result.success) {
       success(editingBanner ? "Banner berhasil diperbarui!" : "Banner baru berhasil ditambahkan!");
       setIsModalOpen(false);
-      window.location.reload();
+      router.refresh();
     } else {
       error(result.error || "Gagal menyimpan data banner.");
     }
@@ -150,14 +152,16 @@ export function BannerListManager({ initialBanners }: BannerListManagerProps) {
     <div className="flex flex-col gap-6 w-full">
       {/* Action Toolbar */}
       <div className="p-5 rounded-2xl border border-border-color/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <Input
-          id="banner-search"
-          placeholder="Cari judul banner..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          icon={<Search className="w-4 h-4 text-text-secondary/60" />}
-          className="w-full sm:w-64"
-        />
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+          <Input
+            id="banner-search"
+            placeholder="Cari judul banner..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            icon={<Search className="w-4 h-4 text-text-secondary/60" />}
+            className="w-full sm:w-64"
+          />
+        </div>
 
         <Button onClick={handleOpenAddModal} className="w-full sm:w-auto flex items-center gap-2">
           <Plus className="w-4 h-4" />

@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { cookies } from "next/headers";
 
-const ALGORITHM = "aes-256-cbc";
+const ALGORITHM = "aes-256-gcm";
 const SESSION_COOKIE_NAME = "tuk_session";
 
 // Validate AUTH_SECRET is set - no fallback for security
@@ -24,23 +24,26 @@ interface SessionData {
 }
 
 export function encryptSession(data: SessionData): string {
-  const iv = crypto.randomBytes(16);
+  const iv = crypto.randomBytes(12); // GCM uses 12-byte IV
   const cipher = crypto.createCipheriv(ALGORITHM, SECRET_KEY, iv);
   const encrypted = Buffer.concat([
     cipher.update(JSON.stringify(data), "utf8"),
     cipher.final(),
   ]);
-  return iv.toString("hex") + ":" + encrypted.toString("hex");
+  const authTag = cipher.getAuthTag();
+  return iv.toString("hex") + ":" + authTag.toString("hex") + ":" + encrypted.toString("hex");
 }
 
 export function decryptSession(encryptedSession: string): SessionData | null {
   try {
-    const [ivHex, encryptedHex] = encryptedSession.split(":");
-    if (!ivHex || !encryptedHex) return null;
+    const [ivHex, authTagHex, encryptedHex] = encryptedSession.split(":");
+    if (!ivHex || !authTagHex || !encryptedHex) return null;
 
     const iv = Buffer.from(ivHex, "hex");
+    const authTag = Buffer.from(authTagHex, "hex");
     const encrypted = Buffer.from(encryptedHex, "hex");
     const decipher = crypto.createDecipheriv(ALGORITHM, SECRET_KEY, iv);
+    decipher.setAuthTag(authTag);
     const decrypted = Buffer.concat([
       decipher.update(encrypted),
       decipher.final(),
@@ -52,7 +55,7 @@ export function decryptSession(encryptedSession: string): SessionData | null {
 }
 
 export function createSessionCookie(sessionToken: string, maxAge = 60 * 60 * 24 * 7): string {
-  return `${SESSION_COOKIE_NAME}=${sessionToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
+  return `${SESSION_COOKIE_NAME}=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
 }
 
 export function clearSessionCookie(): string {
@@ -112,7 +115,15 @@ export async function getSession(): Promise<SessionData | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
   if (!token) return null;
-  return decryptSession(token);
+  const session = decryptSession(token);
+  if (!session) return null;
+
+  // Check expiration (7 days)
+  if (!session.loginTimestamp) return null;
+  const expirationTime = 7 * 24 * 60 * 60 * 1000;
+  if (Date.now() - session.loginTimestamp > expirationTime) return null;
+
+  return session;
 }
 
 export async function createSession(userId: string, role: string): Promise<void> {
@@ -127,6 +138,7 @@ export async function createSession(userId: string, role: string): Promise<void>
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, encryptedToken, {
     httpOnly: true,
+    secure: true,
     sameSite: "lax",
     maxAge: 60 * 60 * 24 * 7,
     path: "/",

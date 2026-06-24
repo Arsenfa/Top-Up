@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { mapMidtransStatus } from "@/lib/midtrans-status";
 
 function verifySignature(
   orderId: string,
@@ -12,7 +13,9 @@ function verifySignature(
 ): boolean {
   const input = orderId + statusCode + grossAmount + serverKey;
   const hash = crypto.createHash("sha512").update(input).digest("hex");
-  return hash === signatureKey;
+  // Constant-time comparison to prevent timing side-channel
+  if (hash.length !== signatureKey.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(signatureKey));
 }
 
 export async function POST(request: NextRequest) {
@@ -37,7 +40,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const serverKey = process.env.MIDTRANS_SERVER_KEY || "";
+    const serverKey = process.env.MIDTRANS_SERVER_KEY;
+    if (!serverKey) {
+      console.error("MIDTRANS_SERVER_KEY not configured");
+      return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
+    }
     const isValid = verifySignature(order_id, status_code, gross_amount, signature_key, serverKey);
 
     if (!isValid) {
@@ -55,20 +62,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Order not found in system." }, { status: 404 });
     }
 
-    let orderStatus = "PENDING";
-    let paidAt: Date | null = null;
-    let completedAt: Date | null = null;
-
-    if (transaction_status === "settlement" ||
-       (transaction_status === "capture" && fraud_status === "accept")) {
-      orderStatus = "SUCCESS";
-      paidAt = new Date();
-      completedAt = new Date();
-    } else if (transaction_status === "pending") {
-      orderStatus = "PENDING";
-    } else if (["deny", "expire", "cancel", "failure"].includes(transaction_status)) {
-      orderStatus = "EXPIRED";
+    // Idempotency: skip if already in terminal state
+    if (order.status === "SUCCESS" || order.status === "FAILED" || order.status === "EXPIRED") {
+      return NextResponse.json({ success: true, message: "Order already in terminal state." });
     }
+
+    const orderStatus = mapMidtransStatus(transaction_status, fraud_status);
+    const paidAt = orderStatus === "SUCCESS" ? new Date() : null;
+    const completedAt = orderStatus === "SUCCESS" ? new Date() : null;
 
     await prisma.order.update({
       where: { id: order.id },
@@ -81,8 +82,6 @@ export async function POST(request: NextRequest) {
         completedAt: completedAt || order.completedAt,
       },
     });
-
-    console.log(`Order ${order_id} successfully updated to status: ${orderStatus}`);
 
     return NextResponse.json({ success: true, message: "Webhook processed." });
   } catch (error) {

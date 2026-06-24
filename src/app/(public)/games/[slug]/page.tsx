@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import React from "react";
 import Image from "next/image";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CheckoutForm } from "@/features/checkout/components/checkout-form";
 import { HelpCircle } from "lucide-react";
@@ -9,6 +10,17 @@ import { Badge } from "@/components/ui/badge";
 
 interface GamePageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: GamePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const { prisma } = await import("@/lib/prisma");
+  const game = await prisma.game.findUnique({ where: { slug }, select: { name: true, description: true } });
+  if (!game) return { title: "Game Tidak Ditemukan" };
+  return {
+    title: `Top Up ${game.name} - TopUpKu`,
+    description: game.description ?? `Top up ${game.name} instan 24 jam di TopUpKu.`,
+  };
 }
 
 export default async function GameDetailPage({ params }: GamePageProps) {

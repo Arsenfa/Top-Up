@@ -65,7 +65,6 @@ export function CheckoutForm({ game, products }: CheckoutFormProps) {
   const [accountInfo, setAccountInfo] = useState<Record<string, string>>({});
   // ponytail: preselect cheapest product so price reads immediately, not "Rp 0"
   const [selectedProductId, setSelectedProductId] = useState(products[0]?.id ?? "");
-  const [paymentMethod, setPaymentMethod] = useState("qris");
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -293,16 +292,11 @@ export function CheckoutForm({ game, products }: CheckoutFormProps) {
             </div>
           </CardHeader>
           <CardBody className="flex flex-col gap-3">
-            {paymentMethods.map((method) => {
-              const isSelected = paymentMethod === method.id;
-              return (
+            {paymentMethods.map((method) => (
                 <button
                   key={method.id}
                   type="button"
-                  onClick={() => setPaymentMethod(method.id)}
-                  className={`flex items-center justify-between p-4 rounded-xl border text-left cursor-pointer transition-colors duration-200 ${
-                    isSelected ? "bg-accent/10 border-accent/60" : "bg-bg-tertiary border-border-color hover:border-border-strong"
-                  }`}
+                  className="flex items-center justify-between p-4 rounded-xl border text-left cursor-pointer transition-colors duration-200 bg-bg-tertiary border-border-color hover:border-border-strong"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-10 rounded-lg bg-bg-secondary border border-border-color p-1 flex items-center justify-center overflow-hidden shrink-0">
@@ -313,12 +307,8 @@ export function CheckoutForm({ game, products }: CheckoutFormProps) {
                       <p className="text-[10px] text-text-muted mt-0.5">{method.tag}</p>
                     </div>
                   </div>
-                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${isSelected ? "border-accent bg-accent" : "border-border-color"}`}>
-                    {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                  </div>
                 </button>
-              );
-            })}
+              ))}
           </CardBody>
         </Card>
 

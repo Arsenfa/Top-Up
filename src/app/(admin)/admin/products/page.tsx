@@ -4,18 +4,17 @@ import { ProductListManager } from "@/features/admin/components/product-list-man
 export default async function AdminProductsPage() {
   const { prisma } = await import("@/lib/prisma");
 
-  const products = await prisma.product.findMany({
-    orderBy: { sortOrder: "asc" },
-    include: {
-      game: { select: { name: true } },
-    },
-  });
-
-  const games = await prisma.game.findMany({
-    where: { isActive: true },
-    select: { id: true, name: true },
-    orderBy: { name: "asc" },
-  });
+  const [products, games] = await Promise.all([
+    prisma.product.findMany({
+      orderBy: { sortOrder: "asc" },
+      include: { game: { select: { name: true } } },
+    }),
+    prisma.game.findMany({
+      where: { isActive: true },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   return (
     <div className="flex flex-col gap-6 w-full">

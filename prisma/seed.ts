@@ -19,8 +19,9 @@ async function main() {
   console.log("Database cleaned.");
 
   // Create Admin User
+  const seedPassword = process.env.SEED_ADMIN_PASSWORD || "admin123";
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash("admin123", salt);
+  const hashedPassword = await bcrypt.hash(seedPassword, salt);
 
   const admin = await prisma.user.create({
     data: {
@@ -30,7 +31,7 @@ async function main() {
       role: "ADMIN",
     },
   });
-  console.log(`Admin user created: ${admin.email} / admin123`);
+  console.log(`Admin user created: ${admin.email}`);
 
   // Create Site Configurations
   await prisma.siteConfig.createMany({

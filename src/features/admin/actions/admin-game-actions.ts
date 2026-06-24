@@ -2,9 +2,12 @@
 
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { getSession, requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export async function toggleGameStatus(gameId: string, field: "isActive" | "isPopular" | "isFeatured", value: boolean) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     const updateData: Prisma.GameUpdateInput = { [field]: value };
 
@@ -25,6 +28,8 @@ export async function toggleGameStatus(gameId: string, field: "isActive" | "isPo
 }
 
 export async function deleteGame(gameId: string) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     await prisma.game.delete({
       where: { id: gameId },
@@ -57,6 +62,8 @@ interface UpsertGameInput {
 }
 
 export async function upsertGame(input: UpsertGameInput) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     const { id, ...data } = input;
 

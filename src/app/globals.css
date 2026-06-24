@@ -24,7 +24,7 @@
   /* ── Text ── */
   --text-primary:       #F2F2F5;
   --text-secondary:     #8B8FA0;
-  --text-muted:         #55586A;
+  --text-muted:         #6B6F82;
   --foreground:         #F2F2F5;
 
   /* ── Accent: Ember Orange ── */
@@ -88,8 +88,8 @@
   --text-body:     15px;
   --text-caption:  13px;
 
-  --font-sans:    'Geist', system-ui, sans-serif;
-  --font-display: 'Geist', system-ui, sans-serif;
+  --font-sans:    'Geist', var(--font-fallback);
+  --font-display: 'Geist', var(--font-fallback);
   --font-mono:    'Geist Mono', ui-monospace, monospace;
 }
 
@@ -97,6 +97,20 @@
    BASE
    ============================================= */
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Font fallback metrics to eliminate CLS from font-display: swap */
+@font-face {
+  font-family: 'Geist fallback';
+  src: local('system-ui'), local('Arial'), local('Helvetica Neue');
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+  size-adjust: 104%;
+}
+
+:root {
+  --font-fallback: 'Geist fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
 
 html {
   -webkit-text-size-adjust: 100%;

@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import React from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { OrderStatus } from "@/features/orders/components/order-status";
 
@@ -8,6 +9,14 @@ interface OrderPageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+export async function generateMetadata({ params }: OrderPageProps): Promise<Metadata> {
+  const { id } = await params;
+  return {
+    title: `Pesanan ${id} - TopUpKu`,
+    description: "Cek status pesanan top up game Anda.",
+  };
 }
 
 export default async function OrderDetailPage({ params }: OrderPageProps) {

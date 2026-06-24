@@ -1,7 +1,10 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getSession, requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+
+const ALLOWED_CONFIG_KEYS = ["site_name", "site_description", "contact_whatsapp", "contact_email"];
 
 interface ConfigInput {
   key: string;
@@ -9,8 +12,12 @@ interface ConfigInput {
 }
 
 export async function updateSiteConfigs(configs: ConfigInput[]) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
-    for (const config of configs) {
+    // Only allow whitelisted config keys
+    const validConfigs = configs.filter((c) => ALLOWED_CONFIG_KEYS.includes(c.key));
+    for (const config of validConfigs) {
       await prisma.siteConfig.upsert({
         where: { key: config.key },
         update: { value: config.value },

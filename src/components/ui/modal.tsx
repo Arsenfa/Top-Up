@@ -32,6 +32,16 @@ export function Modal({
     };
   }, [isOpen]);
 
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const sizes = {
@@ -41,7 +51,7 @@ export function Modal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 transition-opacity duration-200"
@@ -54,9 +64,10 @@ export function Modal({
       >
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-border-color">
-          <h3 className="text-lg font-bold text-text-primary">{title}</h3>
+          <h3 id="modal-title" className="text-lg font-bold text-text-primary">{title}</h3>
           <button
             onClick={onClose}
+            aria-label="Close dialog"
             className="text-text-secondary hover:text-text-primary transition-colors p-1.5 rounded-lg hover:bg-bg-tertiary"
           >
             <X className="w-5 h-5" />

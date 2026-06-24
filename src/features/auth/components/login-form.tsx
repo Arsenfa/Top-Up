@@ -83,6 +83,20 @@ export function LoginForm() {
             <ArrowRight className="w-4 h-4" />
           </Button>
         </form>
+
+        <div className="mt-5 p-4 rounded-xl bg-accent/5 border border-accent/15">
+          <p className="text-xs font-semibold text-accent mb-2">Demo Credentials</p>
+          <div className="flex flex-col gap-1.5 text-xs text-text-secondary">
+            <div className="flex items-center gap-2">
+              <span className="text-text-muted w-16">Email</span>
+              <code className="font-mono bg-bg-tertiary px-2 py-0.5 rounded text-text-primary">admin@topupku.com</code>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-text-muted w-16">Password</span>
+              <code className="font-mono bg-bg-tertiary px-2 py-0.5 rounded text-text-primary">admin123</code>
+            </div>
+          </div>
+        </div>
       </CardBody>
     </Card>
   );

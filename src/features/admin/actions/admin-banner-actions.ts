@@ -1,9 +1,12 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getSession, requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export async function toggleBannerStatus(bannerId: string, value: boolean) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     await prisma.banner.update({
       where: { id: bannerId },
@@ -19,6 +22,8 @@ export async function toggleBannerStatus(bannerId: string, value: boolean) {
 }
 
 export async function deleteBanner(bannerId: string) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     await prisma.banner.delete({ where: { id: bannerId } });
     revalidatePath("/admin/banners");
@@ -41,6 +46,8 @@ interface UpsertBannerInput {
 }
 
 export async function upsertBanner(input: UpsertBannerInput) {
+  const auth = await requireAdmin(await getSession());
+  if (!auth.success) return auth;
   try {
     const { id, ...data } = input;
 

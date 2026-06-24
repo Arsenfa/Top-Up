@@ -18,6 +18,7 @@ function FAQItem({ faq, isOpen, onToggle }: { faq: { q: string; a: string }; isO
     <div className={`rounded-xl border transition-colors ${isOpen ? "border-accent/30 bg-bg-elevated" : "border-border-color bg-bg-tertiary"}`}>
       <button
         onClick={onToggle}
+        aria-expanded={isOpen}
         className="flex items-center justify-between w-full px-5 py-4 text-left gap-4"
       >
         <span className={`text-sm font-semibold transition-colors ${isOpen ? "text-accent" : "text-text-primary"}`}>

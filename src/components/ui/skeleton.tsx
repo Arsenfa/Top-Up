@@ -13,5 +13,5 @@ export function Skeleton({ className = "", variant = "rectangle", ...props }: Sk
     text: "h-3.5 w-full rounded-md",
   };
 
-  return <div className={`${baseStyles} ${variants[variant]} ${className}`} {...props} />;
+  return <div aria-hidden="true" className={`${baseStyles} ${variants[variant]} ${className}`} {...props} />;
 }

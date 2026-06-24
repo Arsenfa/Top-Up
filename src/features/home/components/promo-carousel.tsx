@@ -78,9 +78,9 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="space-y-4"
             >
-              <h3 className="font-display font-extrabold text-xl sm:text-2xl lg:text-3xl text-text-primary leading-[1.15] tracking-tight line-clamp-2">
+              <h2 className="font-display font-extrabold text-xl sm:text-2xl lg:text-3xl text-text-primary leading-[1.15] tracking-tight line-clamp-2">
                 {currentBanner.title}
-              </h3>
+              </h2>
 
               {currentBanner.subtitle && (
                 <p className="text-sm text-text-secondary leading-relaxed max-w-sm line-clamp-3">
@@ -133,6 +133,7 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
           <>
             <button
               onClick={handlePrev}
+              aria-label="Promo sebelumnya"
               className="absolute left-4 bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 z-20 w-8 h-8 rounded-full bg-bg-secondary border border-border-color text-text-primary hover:border-accent hover:text-accent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -140,6 +141,7 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
 
             <button
               onClick={handleNext}
+              aria-label="Promo berikutnya"
               className="absolute left-14 md:left-auto md:right-4 bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 z-20 w-8 h-8 rounded-full bg-bg-secondary border border-border-color text-text-primary hover:border-accent hover:text-accent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
@@ -150,6 +152,7 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
               {banners.map((_, i) => (
                 <button
                   key={i}
+                  aria-label={`Ke promo ${i + 1}`}
                   onClick={() => {
                     setDirection(i > activeIndex ? 1 : -1);
                     setActiveIndex(i);

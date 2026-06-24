@@ -25,8 +25,6 @@ export function getMidtransSnap(): midtransClient.Snap {
       serverKey,
       clientKey,
     });
-
-    console.log(`Midtrans initialized in ${isProduction ? "production" : "sandbox"} mode`);
   }
   return _midtransSnap;
 }

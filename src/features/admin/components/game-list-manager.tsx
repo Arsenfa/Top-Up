@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ interface GameListManagerProps {
 
 export function GameListManager({ initialGames }: GameListManagerProps) {
   const { success, error } = useToast();
+  const router = useRouter();
   const [games, setGames] = useState<GameItem[]>(initialGames);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
@@ -162,7 +164,7 @@ export function GameListManager({ initialGames }: GameListManagerProps) {
     if (result.success) {
       success(editingGame ? "Data game berhasil diperbarui!" : "Game baru berhasil ditambahkan!");
       setIsModalOpen(false);
-      window.location.reload(); // Quick refresh to load initial page props
+      router.refresh();
     } else {
       error(result.error || "Gagal menyimpan data game.");
     }
