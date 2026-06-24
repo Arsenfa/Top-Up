@@ -28,7 +28,7 @@ export function TableBody({ children, className = "", ...props }: React.HTMLAttr
 
 export function TableRow({ children, className = "", ...props }: React.HTMLAttributes<HTMLTableRowElement>) {
   return (
-    <tr className={`hover:bg-bg-tertiary/40 transition-colors duration-150 border-l-2 border-l-transparent hover:border-l-accent/60 ${className}`} {...props}>
+    <tr className={`hover:bg-bg-tertiary/20 transition-colors ${className}`} {...props}>
       {children}
     </tr>
   );

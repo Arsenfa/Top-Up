@@ -27,6 +27,33 @@ export default async function AdminDashboardPage() {
 
   const totalRevenue = revenueAgg._sum.amount ?? 0;
 
+  const stats = [
+    {
+      label: "Total Pendapatan",
+      value: formatCurrency(totalRevenue),
+      icon: <DollarSign className="w-5 h-5 text-success" />,
+      bgIcon: "bg-success/10 border-success/20",
+    },
+    {
+      label: "Total Transaksi",
+      value: totalOrders.toLocaleString("id-ID"),
+      icon: <ShoppingCart className="w-5 h-5 text-accent" />,
+      bgIcon: "bg-accent/10 border-accent/20",
+    },
+    {
+      label: "Menunggu Pembayaran",
+      value: pendingOrders.toLocaleString("id-ID"),
+      icon: <Clock className="w-5 h-5 text-warning" />,
+      bgIcon: "bg-warning/10 border-warning/20",
+    },
+    {
+      label: "Game Aktif",
+      value: activeGames.toLocaleString("id-ID"),
+      icon: <Gamepad2 className="w-5 h-5 text-info" />,
+      bgIcon: "bg-info/10 border-info/20",
+    },
+  ];
+
   const statusBadges = {
     PENDING: "warning" as const,
     PROCESSING: "info" as const,
@@ -56,42 +83,19 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Stats — revenue card gets visual weight */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Primary metric: revenue — accent glow, larger text */}
-        <Card className="sm:col-span-2 lg:col-span-1 border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
-          <CardBody className="flex items-center justify-between p-5">
-            <div className="flex flex-col gap-1">
-              <span className="text-[11px] text-text-muted font-medium tracking-wide uppercase">
-                Total Pendapatan
-              </span>
-              <span className="text-2xl font-extrabold text-accent tracking-tight">
-                {formatCurrency(totalRevenue)}
-              </span>
-            </div>
-            <div className="p-2.5 rounded-lg bg-accent/10 border border-accent/20 text-accent">
-              <DollarSign className="w-5 h-5" />
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Secondary metrics — compact, uniform */}
-        {[
-          { label: "Transaksi", value: totalOrders.toLocaleString("id-ID"), icon: <ShoppingCart className="w-4 h-4" />, color: "text-info" },
-          { label: "Menunggu Bayar", value: pendingOrders.toLocaleString("id-ID"), icon: <Clock className="w-4 h-4" />, color: "text-warning" },
-          { label: "Game Aktif", value: activeGames.toLocaleString("id-ID"), icon: <Gamepad2 className="w-4 h-4" />, color: "text-success" },
-        ].map((stat) => (
-          <Card key={stat.label}>
-            <CardBody className="flex items-center justify-between p-5">
-              <div className="flex flex-col gap-1">
-                <span className="text-[11px] text-text-muted font-medium tracking-wide uppercase">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {stats.map((stat, index) => (
+          <Card key={index} variant="default">
+            <CardBody className="flex items-center justify-between p-6">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] text-text-secondary font-semibold">
                   {stat.label}
                 </span>
-                <span className="text-xl font-extrabold text-text-primary tracking-tight">
+                <span className="text-xl sm:text-2xl font-extrabold text-text-primary">
                   {stat.value}
                 </span>
               </div>
-              <div className={`${stat.color} opacity-60`}>
+              <div className={`p-3 rounded-xl border flex items-center justify-center ${stat.bgIcon}`}>
                 {stat.icon}
               </div>
             </CardBody>
