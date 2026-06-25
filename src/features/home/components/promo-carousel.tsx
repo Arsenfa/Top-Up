@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 interface BannerItem {
@@ -20,45 +19,51 @@ interface PromoCarouselProps {
 
 export function PromoCarousel({ banners }: PromoCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [direction, setDirection] = useState<"left" | "right">("right");
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const goTo = useCallback(
+    (nextIndex: number, dir: "left" | "right") => {
+      if (isTransitioning) return;
+      setDirection(dir);
+      setIsTransitioning(true);
+      // ponytail: short delay for exit animation, then swap
+      setTimeout(() => {
+        setActiveIndex(nextIndex);
+        setIsTransitioning(false);
+      }, 200);
+    },
+    [isTransitioning]
+  );
 
   useEffect(() => {
     if (banners.length <= 1) return;
     const interval = setInterval(() => {
-      setDirection(1);
-      setActiveIndex((i) => (i + 1) % banners.length);
+      const next = (activeIndex + 1) % banners.length;
+      goTo(next, "right");
     }, 6000);
     return () => clearInterval(interval);
-  }, [banners.length]);
+  }, [banners.length, activeIndex, goTo]);
 
   if (banners.length === 0) return null;
 
   const handlePrev = () => {
-    setDirection(-1);
-    setActiveIndex((i) => (i === 0 ? banners.length - 1 : i - 1));
+    const next = activeIndex === 0 ? banners.length - 1 : activeIndex - 1;
+    goTo(next, "left");
   };
 
   const handleNext = () => {
-    setDirection(1);
-    setActiveIndex((i) => (i + 1) % banners.length);
-  };
-
-  const slideVariants = {
-    enter: (dir: number) => ({
-      x: dir > 0 ? 100 : -100,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (dir: number) => ({
-      x: dir < 0 ? 100 : -100,
-      opacity: 0,
-    }),
+    const next = (activeIndex + 1) % banners.length;
+    goTo(next, "right");
   };
 
   const currentBanner = banners[activeIndex];
+
+  const slideClass = isTransitioning
+    ? direction === "right"
+      ? "opacity-0 -translate-x-4"
+      : "opacity-0 translate-x-4"
+    : "opacity-100 translate-x-0";
 
   return (
     <div className="relative w-full py-4">
@@ -67,65 +72,43 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
       >
         {/* Content Panel */}
         <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center bg-bg-secondary relative z-10">
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={currentBanner.id}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="space-y-4"
-            >
-              <h2 className="font-display font-extrabold text-xl sm:text-2xl lg:text-3xl text-text-primary leading-[1.15] tracking-tight line-clamp-2">
-                {currentBanner.title}
-              </h2>
+          <div className={`space-y-4 transition-all duration-200 ease-in-out ${slideClass}`}>
+            <h2 className="font-display font-extrabold text-xl sm:text-2xl lg:text-3xl text-text-primary leading-[1.15] tracking-tight line-clamp-2">
+              {currentBanner.title}
+            </h2>
 
-              {currentBanner.subtitle && (
-                <p className="text-sm text-text-secondary leading-relaxed max-w-sm line-clamp-3">
-                  {currentBanner.subtitle}
-                </p>
-              )}
+            {currentBanner.subtitle && (
+              <p className="text-sm text-text-secondary leading-relaxed max-w-sm line-clamp-3">
+                {currentBanner.subtitle}
+              </p>
+            )}
 
-              {currentBanner.linkUrl && (
-                <div className="pt-2">
-                  <Link
-                    href={currentBanner.linkUrl}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-bg-primary transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    Klaim Promo
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+            {currentBanner.linkUrl && (
+              <div className="pt-2">
+                <Link
+                  href={currentBanner.linkUrl}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-bg-primary transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Klaim Promo
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Image Panel */}
         <div className="relative h-48 md:h-full overflow-hidden bg-bg-tertiary">
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={currentBanner.id}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="absolute inset-0"
-            >
-              <Image
-                src={currentBanner.imageUrl}
-                alt={currentBanner.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-bg-secondary via-transparent to-transparent opacity-60 md:opacity-100 pointer-events-none" />
-            </motion.div>
-          </AnimatePresence>
+          <div className={`absolute inset-0 transition-all duration-200 ease-in-out ${slideClass}`}>
+            <Image
+              src={currentBanner.imageUrl}
+              alt={currentBanner.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-bg-secondary via-transparent to-transparent opacity-60 md:opacity-100 pointer-events-none" />
+          </div>
         </div>
 
         {/* Carousel Navigation */}
@@ -154,8 +137,7 @@ export function PromoCarousel({ banners }: PromoCarouselProps) {
                   key={i}
                   aria-label={`Ke promo ${i + 1}`}
                   onClick={() => {
-                    setDirection(i > activeIndex ? 1 : -1);
-                    setActiveIndex(i);
+                    goTo(i, i > activeIndex ? "right" : "left");
                   }}
                   className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                     i === activeIndex

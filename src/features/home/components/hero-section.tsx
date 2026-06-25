@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, ArrowRight, ShieldCheck, Zap, Clock } from "lucide-react";
 
 interface GameSearchItem {
@@ -23,7 +22,6 @@ export function HeroSection({ games }: HeroSectionProps) {
   const [isFocused, setIsFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Derive suggestions during render - no useEffect needed
   const suggestions = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase();
@@ -48,6 +46,8 @@ export function HeroSection({ games }: HeroSectionProps) {
     setSearchQuery("");
   };
 
+  const showDropdown = isFocused && (searchQuery || suggestions.length > 0);
+
   return (
     <section className="w-full bg-bg-primary">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 lg:pt-14 lg:pb-24">
@@ -55,17 +55,13 @@ export function HeroSection({ games }: HeroSectionProps) {
 
           {/* Left: Text content & Search */}
           <div className="space-y-6 lg:max-w-xl">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
+            <div className="animate-fade-in-up">
               <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] text-text-primary tracking-tighter leading-[1.2] font-black">
                 Top Up Game Favorit
                 <br />
                 <span className="text-accent">Langsung Masuk</span>
               </h1>
-            </motion.div>
+            </div>
 
             <p className="text-base sm:text-lg text-text-secondary leading-relaxed max-w-md">
               Diamond ML, UC PUBG, VP Valorant. Bayar, tunggu sebentar, selesai. Tanpa login akun, tanpa ribet.
@@ -101,45 +97,38 @@ export function HeroSection({ games }: HeroSectionProps) {
                 )}
               </div>
 
-              <AnimatePresence>
-                {isFocused && (searchQuery || suggestions.length > 0) && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 8 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border-color rounded-xl overflow-hidden z-30 shadow-elevated"
-                  >
-                    {suggestions.length > 0 ? (
-                      <div className="py-1">
-                        {suggestions.map((game) => (
-                          <button
-                            key={game.id}
-                            onClick={() => handleSelect(game.slug)}
-                            className="w-full px-4 py-3 text-left hover:bg-bg-tertiary flex items-center justify-between transition-colors group text-sm cursor-pointer"
-                          >
-                            <div className="flex items-center gap-3">
-                              <span className="font-semibold text-text-primary group-hover:text-accent transition-colors">
-                                {game.name}
-                              </span>
-                              <span className="text-xs text-text-muted bg-bg-tertiary px-2 py-0.5 rounded-md">
-                                {game.category}
-                              </span>
-                            </div>
-                            <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-accent transition-colors" />
-                          </button>
-                        ))}
-                      </div>
-                    ) : searchQuery ? (
-                      <div className="px-4 py-6 text-center text-sm text-text-muted">
-                        Tidak ada game &ldquo;{searchQuery}&rdquo; ditemukan.
-                      </div>
-                    ) : null}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {showDropdown && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-bg-secondary border border-border-color rounded-xl overflow-hidden z-30 shadow-elevated animate-fade-in-up-fast">
+                  {suggestions.length > 0 ? (
+                    <div className="py-1">
+                      {suggestions.map((game) => (
+                        <button
+                          key={game.id}
+                          onClick={() => handleSelect(game.slug)}
+                          className="w-full px-4 py-3 text-left hover:bg-bg-tertiary flex items-center justify-between transition-colors group text-sm cursor-pointer"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="font-semibold text-text-primary group-hover:text-accent transition-colors">
+                              {game.name}
+                            </span>
+                            <span className="text-xs text-text-muted bg-bg-tertiary px-2 py-0.5 rounded-md">
+                              {game.category}
+                            </span>
+                          </div>
+                          <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-accent transition-colors" />
+                        </button>
+                      ))}
+                    </div>
+                  ) : searchQuery ? (
+                    <div className="px-4 py-6 text-center text-sm text-text-muted">
+                      Tidak ada game &ldquo;{searchQuery}&rdquo; ditemukan.
+                    </div>
+                  ) : null}
+                </div>
+              )}
             </div>
 
-            {/* Trust signals: static, no mock data */}
+            {/* Trust signals */}
             <div className="flex items-center gap-5 text-xs text-text-muted pt-2">
               <div className="flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5 text-accent" />
@@ -158,7 +147,7 @@ export function HeroSection({ games }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* Right: Hero Visual, clean, no badges */}
+          {/* Right: Hero Visual */}
           <div className="relative w-full max-w-md mx-auto">
             <div className="relative rounded-[28px] overflow-hidden border border-border-color bg-bg-secondary p-1.5 shadow-elevated">
               <div className="relative aspect-square rounded-[22px] overflow-hidden bg-bg-tertiary">
@@ -167,6 +156,7 @@ export function HeroSection({ games }: HeroSectionProps) {
                   alt="TopUpKu Gaming Banner"
                   fill
                   priority
+                  loading="eager"
                   sizes="(max-width: 1024px) 90vw, 450px"
                   className="object-cover rounded-[22px]"
                 />

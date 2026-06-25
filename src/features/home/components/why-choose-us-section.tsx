@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import { Clock, ShieldOff, Tag, Headset } from "lucide-react";
 
 const REASONS = [
@@ -32,8 +31,6 @@ const REASONS = [
 ];
 
 export function WhyChooseUsSection() {
-  const reduce = useReducedMotion();
-
   return (
     <section className="w-full py-16 sm:py-24 bg-bg-primary">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,15 +45,11 @@ export function WhyChooseUsSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {REASONS.map((r, i) => {
+          {REASONS.map((r) => {
             const Icon = r.icon;
             return (
-              <motion.div
+              <div
                 key={r.stat}
-                initial={reduce ? false : { opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.25 }}
-                transition={{ duration: 0.45, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col gap-4 p-5 sm:p-6 rounded-2xl bg-bg-secondary border border-border-subtle hover:border-accent/25 transition-colors duration-200"
               >
                 <div className="flex items-start justify-between gap-3">
@@ -76,7 +69,7 @@ export function WhyChooseUsSection() {
                     {r.desc}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>

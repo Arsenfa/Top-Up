@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { GameCard } from "@/components/shared/game-card";
 import { LayoutGrid, Sword, Target, Sparkles } from "lucide-react";
 
@@ -56,17 +55,10 @@ export function GameSection({ games }: GameSectionProps) {
                   onClick={() => setSelected(cat.id)}
                   className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
                     isSelected
-                      ? "text-bg-primary"
+                      ? "text-bg-primary bg-accent"
                       : "text-text-secondary bg-bg-elevated hover:text-text-primary hover:bg-bg-elevated/80"
                   }`}
                 >
-                  {isSelected && (
-                    <motion.div
-                      layoutId="activeCategoryTab"
-                      className="absolute inset-0 bg-accent rounded-lg -z-10"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
                   <Icon className="w-3.5 h-3.5 shrink-0" />
                   <span className="whitespace-nowrap">{cat.label}</span>
                 </button>
@@ -75,46 +67,31 @@ export function GameSection({ games }: GameSectionProps) {
           </div>
         </div>
 
-        <AnimatePresence mode="popLayout">
-          {filtered.length > 0 ? (
-            <motion.div
-              layout
-              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
-            >
-              {filtered.map((game, i) => (
-                <motion.div
-                  layout
-                  key={game.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                  className={
-                    // ponytail: first 2 popular games span wider on lg for hierarchy
-                    selected === "ALL" && i < 2 ? "lg:col-span-2" : ""
-                  }
-                >
-                  <GameCard game={game} startPrice={game.minPrice} featured={selected === "ALL" && i < 2} />
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-24 rounded-2xl border border-border-color bg-bg-secondary"
-            >
-              <LayoutGrid className="w-12 h-12 text-text-muted mb-4 stroke-[1.5]" />
-              <p className="text-sm font-semibold text-text-muted">Tidak ada game di kategori ini.</p>
-              <button
-                onClick={() => setSelected("ALL")}
-                className="mt-4 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-xl text-xs font-bold transition-colors cursor-pointer"
+        {filtered.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            {filtered.map((game, i) => (
+              <div
+                key={game.id}
+                className={`transition-opacity duration-200 ${
+                  selected === "ALL" && i < 2 ? "lg:col-span-2" : ""
+                }`}
               >
-                Tampilkan Semua
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <GameCard game={game} startPrice={game.minPrice} featured={selected === "ALL" && i < 2} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-24 rounded-2xl border border-border-color bg-bg-secondary">
+            <LayoutGrid className="w-12 h-12 text-text-muted mb-4 stroke-[1.5]" />
+            <p className="text-sm font-semibold text-text-muted">Tidak ada game di kategori ini.</p>
+            <button
+              onClick={() => setSelected("ALL")}
+              className="mt-4 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-xl text-xs font-bold transition-colors cursor-pointer"
+            >
+              Tampilkan Semua
+            </button>
+          </div>
+        )}
 
       </div>
     </section>

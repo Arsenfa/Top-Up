@@ -1,7 +1,6 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
 
 const TESTIMONIALS = [
   {
@@ -49,8 +48,6 @@ const TESTIMONIALS = [
 ];
 
 export function TestimonialsSection() {
-  const reduce = useReducedMotion();
-
   return (
     <section className="w-full py-16 sm:py-24 bg-bg-secondary border-y border-border-subtle">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,13 +67,9 @@ export function TestimonialsSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {TESTIMONIALS.map((t, i) => (
-            <motion.div
+          {TESTIMONIALS.map((t) => (
+            <div
               key={t.name}
-              initial={reduce ? false : { opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.4, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
               className="rounded-2xl bg-bg-primary border border-border-subtle p-5 flex flex-col gap-4"
             >
               <div className="flex gap-[3px]">
@@ -101,7 +94,7 @@ export function TestimonialsSection() {
                   <p className="text-[10px] text-text-muted mt-0.5">{t.game}</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
