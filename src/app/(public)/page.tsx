@@ -21,12 +21,12 @@ const FAQSection = React.lazy(() =>
   import("@/features/home/components/faq-section").then((m) => ({ default: m.FAQSection }))
 );
 
-// ponytail: lightweight skeleton placeholder
-function SectionSkeleton({ height = "h-64" }: { height?: string }) {
-  return <div className={`w-full ${height} bg-bg-secondary animate-pulse`} />;
+// ponytail: lightweight skeleton placeholder with min-height to prevent CLS
+function SectionSkeleton({ height = "h-64", minHeight }: { height?: string; minHeight?: string }) {
+  return <div className={`w-full ${height} ${minHeight ? minHeight : "min-h-[256px]"} bg-bg-secondary animate-pulse`} />;
 }
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: cache 60 detik, rebuild di background
 
 export default async function HomePage() {
   const { prisma } = await import("@/lib/prisma");
