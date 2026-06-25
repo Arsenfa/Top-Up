@@ -45,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+    <html lang="id" className={`${GeistSans.className} ${GeistMono.variable}`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-bg-primary text-text-primary" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
